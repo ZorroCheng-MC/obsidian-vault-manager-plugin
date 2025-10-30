@@ -1,0 +1,147 @@
+---
+description: Generate comprehensive LLM.txt file for repository analysis and study
+argument-hint: [repository-url-or-path] (Git repository URL or local path to analyze)
+allowed-tools:
+  - Bash(git:*)
+  - Bash(find:*)
+  - Bash(cat:*)
+  - Bash(wc:*)
+  - Bash(head:*)
+  - Bash(tail:*)
+  - Write(*)
+  - Read(*)
+  - Bash(date:*)
+---
+
+## Context
+
+- **Today's Date:** !`date "+%Y-%m-%d"`
+- **Input:** `$ARGUMENTS`
+- **Purpose:** Create comprehensive LLM.txt for repository study and analysis
+
+## Your Task
+
+Generate a structured LLM.txt file that provides comprehensive context about a repository for AI analysis.
+
+### Step 1: Repository Analysis
+
+1. **If URL provided, clone repository:**
+   ```bash
+   git clone $ARGUMENTS temp-repo
+   cd temp-repo
+   ```
+
+2. **If local path provided, navigate:**
+   ```bash
+   cd $ARGUMENTS
+   ```
+
+### Step 2: Repository Intelligence Gathering
+
+1. **Basic Repository Info:**
+   ```bash
+   echo "Repository: $(basename $(pwd))"
+   echo "Last commit: $(git log -1 --format='%h - %s (%cr)' 2>/dev/null || echo 'Not a git repo')"
+   echo "Branch: $(git branch --show-current 2>/dev/null || echo 'N/A')"
+   echo "Total files: $(find . -type f ! -path './.git/*' | wc -l)"
+   ```
+
+2. **Project Structure Analysis:**
+   ```bash
+   find . -type f ! -path './.git/*' ! -path './node_modules/*' ! -path './.next/*' ! -path './dist/*' ! -path './build/*' -name "*.md" -o -name "*.json" -o -name "*.js" -o -name "*.ts" -o -name "*.py" -o -name "*.go" -o -name "*.rs" -o -name "*.java" | head -50
+   ```
+
+### Step 3: Create LLM.txt File
+
+Generate `llm.txt` in the repository root with this structure:
+
+```
+# Repository Analysis: [REPO-NAME]
+Generated: [DATE]
+Source: [URL/PATH]
+
+## 📁 Project Overview
+[Brief description based on README, package.json, or code analysis]
+
+## 🏗️ Architecture & Structure
+```
+[Tree structure of important directories and files]
+```
+
+## 📋 Key Files Analysis
+
+### Configuration Files
+[Content of package.json, requirements.txt, Cargo.toml, go.mod, etc.]
+
+### Documentation
+[README.md, docs/ content, API documentation]
+
+### Core Implementation
+[Main source files with key functions/classes highlighted]
+
+## 🔧 Dependencies & Technologies
+[List of dependencies, frameworks, languages used]
+
+## 📚 Study Guide Recommendations
+- Key files to understand first: [list]
+- Main architectural patterns: [patterns found]
+- Entry points for exploration: [main files]
+- Testing approach: [test files/frameworks]
+
+## 💡 Learning Path
+1. Start with: [most important file]
+2. Then explore: [logical next steps]
+3. Advanced concepts: [complex parts]
+
+## 📊 Repository Statistics
+- Total Lines of Code: [count]
+- Primary Language: [detected language]
+- File Types: [breakdown by extension]
+- Last Activity: [git info]
+```
+
+### Step 4: Optimization
+
+1. **Limit file content** to essential parts (first 50 lines of large files)
+2. **Focus on structure** rather than implementation details
+3. **Highlight patterns** and architectural decisions
+4. **Create study roadmap** based on complexity and dependencies
+
+### Step 5: Create Study Entry
+
+Also create a study note: `[date]-[repo-name]-study.md`
+
+```yaml
+---
+title: "Repository Study: [REPO-NAME]"
+tags: [study, repository, code-analysis]
+source: [URL/PATH]
+created: [DATE]
+llm-context: ./llm.txt
+---
+
+## 📖 Repository Study Guide
+
+**Repository:** [REPO-NAME]
+**Source:** [URL/PATH]
+**Generated:** [DATE]
+
+## 🎯 Study Objectives
+- [ ] Understand overall architecture
+- [ ] Identify key patterns and practices
+- [ ] Map dependencies and relationships
+- [ ] Analyze implementation approaches
+
+## 📚 Generated Context
+- **LLM Context File:** `llm.txt` (available in repository)
+- **Total Analysis:** [file count] files processed
+
+## 📝 Study Notes
+(Add your observations and learnings here)
+
+## ⭐ Key Insights
+(Document important discoveries and patterns)
+```
+
+### Step 6: Cleanup
+If repository was cloned temporarily, offer to clean it up or keep it for further study.

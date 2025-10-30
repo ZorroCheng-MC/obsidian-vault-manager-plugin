@@ -1,0 +1,113 @@
+{
+  "name": "obsidian-vault-manager",
+  "owner": {
+    "name": "Zorro Cheng",
+    "email": "zorrocheng.mc@gmail.com"
+  },
+  "metadata": {
+    "description": "AI-powered Obsidian knowledge base management with smart capture, tagging, and publishing",
+    "version": "1.0.0",
+    "repository": "https://github.com/ZorroCheng-MC/obsidian-vault-manager-plugin",
+    "homepage": "https://github.com/ZorroCheng-MC/obsidian-vault-manager-plugin#readme",
+    "issues": "https://github.com/ZorroCheng-MC/obsidian-vault-manager-plugin/issues",
+    "changelog": "https://github.com/ZorroCheng-MC/obsidian-vault-manager-plugin/blob/main/CHANGELOG.md",
+    "license": "MIT",
+    "keywords": [
+      "obsidian",
+      "knowledge-management",
+      "pkm",
+      "tagging",
+      "automation",
+      "github-pages",
+      "youtube",
+      "semantic-search",
+      "ai-powered",
+      "claude-code"
+    ]
+  },
+  "plugins": [
+    {
+      "name": "obsidian-vault-manager",
+      "description": "Manage Obsidian knowledge base with smart capture, AI-powered tagging, and publishing workflows",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./obsidian-vault-manager"
+      ],
+      "commands": [
+        "./commands/setup.md",
+        "./commands/capture.md",
+        "./commands/publish.md",
+        "./commands/idea.md",
+        "./commands/youtube-note.md",
+        "./commands/study-guide.md",
+        "./commands/semantic-search.md",
+        "./commands/bulk-auto-tag.md"
+      ]
+    }
+  ],
+  "dependencies": {
+    "obsidianPlugins": {
+      "required": [
+        {
+          "name": "obsidian-local-rest-api",
+          "url": "https://github.com/coddingtonbear/obsidian-local-rest-api",
+          "description": "Provides HTTP API for vault access"
+        },
+        {
+          "name": "obsidian-mcp-tools",
+          "url": "https://github.com/jacksteamdev/obsidian-mcp-tools",
+          "description": "MCP server for Obsidian vault operations"
+        }
+      ],
+      "optional": [
+        {
+          "name": "smart-connections",
+          "url": "https://smartconnections.app/",
+          "description": "Enables semantic search capabilities"
+        }
+      ]
+    },
+    "mcpServers": {
+      "required": [
+        "obsidian-mcp-tools",
+        "fetch",
+        "gitingest"
+      ],
+      "optional": [
+        "github"
+      ]
+    },
+    "systemTools": {
+      "required": [
+        {
+          "name": "uv/uvx",
+          "install": "brew install uv",
+          "purpose": "YouTube transcript fetching"
+        },
+        {
+          "name": "python3",
+          "install": "Built-in (macOS/Linux) or python.org",
+          "purpose": "Image path conversion"
+        }
+      ],
+      "optional": [
+        {
+          "name": "jq",
+          "install": "brew install jq",
+          "purpose": "JSON parsing"
+        },
+        {
+          "name": "gh",
+          "install": "brew install gh",
+          "purpose": "GitHub CLI operations"
+        }
+      ]
+    }
+  },
+  "configuration": {
+    "requiresVaultContext": true,
+    "configLocation": ".claude/settings.local.json",
+    "setupCommand": "/setup"
+  }
+}

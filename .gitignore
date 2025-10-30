@@ -1,0 +1,44 @@
+# Local Configuration
+*.local.*
+config.sh
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary
+tmp/
+temp/
+.tmp/
+
+# Node
+node_modules/
+package-lock.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+venv/
+.venv/
+
+# Build
+dist/
+build/
+*.egg-info/
+
+# Personal Notes (don't commit examples)
+examples/.claude/settings.local.json
+examples/.claude/config.sh

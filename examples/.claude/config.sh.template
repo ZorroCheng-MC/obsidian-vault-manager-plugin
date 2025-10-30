@@ -1,0 +1,8 @@
+#!/bin/bash
+# Obsidian Vault Manager Configuration Template
+# Copy this file to your vault's .claude/config.sh and edit paths
+
+export OBSIDIAN_VAULT_PATH="/path/to/your/vault"
+export GITHUB_PAGES_PATH="/path/to/your/github-pages-repo"
+export GITHUB_PAGES_URL="https://username.github.io/repo-name"
+export GITHUB_PAGES_REPO_NAME="repo-name"
