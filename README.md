@@ -75,12 +75,48 @@ sudo apt install git jq
 
 ## Installation
 
-Now that you have the requirements, install the plugin:
+Now that you have the requirements installed, you can install this plugin:
+
+### Option 1: Browse and Install (Recommended)
 
 ```bash
-# Install from Claude Code marketplace
-claude plugin add obsidian-vault-manager
+# Start Claude Code
+claude
+
+# Browse available plugins
+/plugin
+
+# Search for "obsidian-vault-manager" and select it to install
 ```
+
+This opens an interactive menu where you can:
+- Browse all available plugins
+- Read plugin descriptions
+- See installation status
+- Install with one click
+
+### Option 2: Direct Install
+
+If you already know the plugin name:
+
+```bash
+# Start Claude Code
+claude
+
+# Install directly
+/plugin install obsidian-vault-manager
+```
+
+### Verify Installation
+
+After installation, verify the plugin is available:
+
+```bash
+# List installed plugins
+/plugin list
+```
+
+You should see `obsidian-vault-manager` in the list.
 
 ---
 
