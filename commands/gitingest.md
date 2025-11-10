@@ -1,182 +1,169 @@
----
-description: Efficiently analyze GitHub repositories using GitIngest for AI-friendly text extraction without full cloning
-argument-hint: [repository-url] [focus:code|docs|config|all] [max-size-kb:50] [branch] [token] [output-file]
-allowed-tools:
-  - Bash(gitingest:*)
-  - Bash(python3:*)
-  - Write(*)
-  - Read(*)
+**Purpose**: Git repository analysis and markdown digest generation for LLM ingestion using GitHub MCP tools
+
 ---
 
-## Context
-- **Today's Date:** !`date "+%Y-%m-%d"`
-- **Input:** `$ARGUMENTS`
-- **Purpose:** Analyze repositories efficiently using GitIngest for LLM consumption
+@include shared/universal-constants.yml#Universal_Legend
 
-## Your Task
-Use GitIngest to analyze a repository without full cloning, providing smart filtering and focused analysis.
+## Command Execution
+Execute: immediate. --plan→show plan first
+Legend: Generated based on symbols used in command
+Purpose: "[Action][Subject] - Analyze GitHub repository and create markdown digest"
 
-### Parameters
-- **Argument 1 (Required):** Repository URL or local path
-- **Argument 2 (Optional):** Focus type - `code` (default), `docs`, `config`, or `all`
-- **Argument 3 (Optional):** Max file size in KB (default: 50)
-- **Argument 4 (Optional):** Branch name
-- **Argument 5 (Optional):** GitHub token for private repos
-- **Argument 6 (Optional):** Output file path (default: stdout)
+Analyze GitHub repositories using native MCP Docker GitHub tools and create LLM-optimized markdown digests automatically saved to your Obsidian vault.
 
-### Step 1: Validate GitIngest Installation
-```bash
-if ! command -v gitingest &> /dev/null; then
-    echo "❌ GitIngest not installed. Installing now..."
-    pipx install gitingest || pip install gitingest
-    if ! command -v gitingest &> /dev/null; then
-        echo "❌ Failed to install GitIngest. Please install manually:"
-        echo "   pipx install gitingest"
-        echo "   # or"
-        echo "   pip install gitingest"
-        exit 1
-    fi
-fi
+@include shared/flag-inheritance.yml#Universal_Always
+
+## Usage
+
+```
+/gitingest <github-url> [options]
 ```
 
-### Step 2: Parse Arguments and Set Defaults
-```bash
-REPO_URL="$1"
-FOCUS="${2:-code}"
-MAX_SIZE_KB="${3:-50}"
-BRANCH="$4"
-TOKEN="$5"
-OUTPUT_FILE="$6"
+**Examples:**
+- `/gitingest https://github.com/user/repo` - Analyze public GitHub repo
+- `/gitingest https://github.com/user/private-repo` - Analyze private repo (uses your authenticated credentials)
+- `/gitingest https://github.com/user/repo --branch feature-branch` - Analyze specific branch
+- `/gitingest https://github.com/user/repo --focus code` - Focus on code files only
 
-if [[ -z "$REPO_URL" ]]; then
-    echo "❌ Error: Repository URL is required"
-    echo "Usage: gitingest <repo-url> [focus] [max-size-kb] [branch] [token] [output-file]"
-    echo "Focus options: code, docs, config, all"
-    exit 1
-fi
+## Parameters
 
-# Convert KB to bytes
-MAX_SIZE_BYTES=$((MAX_SIZE_KB * 1024))
+**Required:**
+- `<github-url>`: Full GitHub repository URL (e.g., https://github.com/owner/repo)
 
-echo "🔍 Analyzing repository: $REPO_URL"
-echo "📋 Focus: $FOCUS"
-echo "📏 Max file size: ${MAX_SIZE_KB}KB"
-[[ -n "$BRANCH" ]] && echo "🌿 Branch: $BRANCH"
-[[ -n "$TOKEN" ]] && echo "🔐 Using authentication token"
-echo ""
+**Optional:**
+- `--branch <name>`: Specific branch to analyze (default: repo's default branch)
+- `--focus <mode>`: Analysis focus mode
+  - `code`: Code files only (*.js, *.py, *.ts, *.go, *.java, etc.)
+  - `docs`: Documentation only (*.md, *.txt, *.rst, etc.)
+  - `config`: Configuration files (*.json, *.yml, *.toml, Dockerfile, etc.)
+  - `all`: All files (default)
+
+## Implementation Details
+
+**This command uses MCP Docker GitHub tools:**
+1. **Repository Access**: `mcp__MCP_DOCKER__get_file_contents` to browse repository
+2. **File Reading**: Recursive file tree traversal
+3. **Content Extraction**: Direct file content retrieval from GitHub API
+4. **Metadata Collection**: Repository info, commits, branches
+
+**Authentication:**
+- Uses your existing GitHub credentials configured in MCP Docker
+- Works with both public and private repositories
+- No additional token setup required
+
+**Output:**
+- Auto-saves to: `/Users/zorro/Documents/Obsidian/Claudecode/`
+- Filename format: `YYYY-MM-DD-<repo-name>-repository-analysis.md`
+- Includes frontmatter with tags, metadata, and classification
+
+## Analysis Process
+
+The command will:
+
+1. **Parse GitHub URL** to extract owner and repository name
+2. **Fetch repository structure** using `get_file_contents` with path="/"
+3. **Filter files** based on `--focus` mode (if specified)
+4. **Read file contents** for all relevant files
+5. **Collect metadata**:
+   - Recent commits (last 10)
+   - Branch information
+   - Repository description
+6. **Generate markdown digest** with:
+   - Repository overview
+   - File tree structure
+   - Key file contents
+   - Technical stack analysis
+   - Usage examples (from README if available)
+   - Metadata and tags
+
+## Focus Modes
+
+**Code Focus** (`--focus code`):
+- Includes: `*.js`, `*.ts`, `*.py`, `*.go`, `*.java`, `*.rb`, `*.php`, `*.rs`, `*.c`, `*.cpp`, `*.h`, `*.swift`, `*.kt`
+- Excludes: Documentation, configs, build artifacts
+
+**Docs Focus** (`--focus docs`):
+- Includes: `*.md`, `*.txt`, `*.rst`, `*.adoc`, `CHANGELOG`, `LICENSE`
+- Excludes: Code files, configs
+
+**Config Focus** (`--focus config`):
+- Includes: `*.json`, `*.yml`, `*.yaml`, `*.toml`, `*.ini`, `Dockerfile`, `.env.example`, `package.json`, `requirements.txt`
+- Excludes: Code, documentation
+
+**All Files** (`--focus all`, default):
+- Includes everything except common excludes:
+  - `node_modules/`, `.git/`, `dist/`, `build/`, `__pycache__/`
+  - Binary files (detected by file extension)
+  - Files larger than 1MB
+
+## Output Format
+
+The generated markdown file includes:
+
+```markdown
+---
+title: "<Repo Name>: <Brief Description>"
+tags:
+  - repository
+  - <detected-languages>
+  - <tech-stack>
+  - technical
+  - inbox
+url: <github-url>
+date: <capture-date>
+type: repository
+status: inbox
+priority: medium
+owner: <github-owner>
+visibility: <public|private>
+---
+
+# [Repository Name](github-url)
+
+## 📖 Repository Overview
+<Auto-generated description>
+
+## 📁 Repository Structure
+<File tree>
+
+## 🔑 Key Files
+
+### <filename>
+<File contents or summary>
+
+## 🛠️ Technical Stack
+<Detected technologies>
+
+## 📊 Repository Metrics
+<Commits, branches, size, etc.>
+
+## 🏷️ Tags Analysis
+<Why these tags were chosen>
 ```
 
-### Step 3: Build GitIngest Command Based on Focus
-```bash
-# Base command
-CMD="gitingest '$REPO_URL' -s $MAX_SIZE_BYTES"
+## Use Cases
 
-# Add common exclude patterns (always exclude these)
-CMD="$CMD -e 'node_modules/*' -e 'dist/*' -e 'build/*' -e '__pycache__/*'"
-CMD="$CMD -e '.git/*' -e '.venv/*' -e 'venv/*' -e '*.log' -e '*.lock'"
-CMD="$CMD -e '*.min.js' -e '*.min.css' -e '*.bundle.*' -e '*.map'"
-CMD="$CMD -e '.DS_Store' -e 'Thumbs.db' -e '.cache/*' -e 'coverage/*'"
+- **Code Review Preparation**: Get full context before reviewing PRs
+- **Architecture Analysis**: Understand project structure quickly
+- **Onboarding**: Help new team members understand codebase
+- **Documentation**: Generate knowledge base entries
+- **AI Context**: Prepare repository context for Claude Code analysis
 
-# Add include patterns based on focus
-case "$FOCUS" in
-    "code")
-        CMD="$CMD -i '*.py' -i '*.js' -i '*.ts' -i '*.jsx' -i '*.tsx'"
-        CMD="$CMD -i '*.go' -i '*.rs' -i '*.java' -i '*.cpp' -i '*.c' -i '*.h'"
-        CMD="$CMD -i '*.cs' -i '*.php' -i '*.rb' -i '*.kt' -i '*.swift'"
-        CMD="$CMD -i '*.scala' -i '*.clj' -i '*.hs' -i '*.dart' -i '*.lua'"
-        CMD="$CMD -i '*.r' -i '*.m' -i '*.sql' -i '*.sh' -i '*.bash'"
-        ;;
-    "docs")
-        CMD="$CMD -i '*.md' -i '*.txt' -i '*.rst' -i '*.adoc' -i '*.tex'"
-        CMD="$CMD -i 'README*' -i 'CHANGELOG*' -i 'LICENSE*' -i 'CONTRIBUTING*'"
-        CMD="$CMD -i 'INSTALL*' -i 'USAGE*' -i '*.wiki' -i 'docs/*'"
-        ;;
-    "config")
-        CMD="$CMD -i '*.json' -i '*.yaml' -i '*.yml' -i '*.toml' -i '*.ini'"
-        CMD="$CMD -i '*.cfg' -i '*.conf' -i 'Dockerfile' -i 'docker-compose.*'"
-        CMD="$CMD -i 'Makefile' -i '*.cmake' -i 'package.json' -i 'requirements.txt'"
-        CMD="$CMD -i 'Cargo.toml' -i 'go.mod' -i 'pyproject.toml' -i '.env*'"
-        CMD="$CMD -i '*.properties' -i '*.xml' -i '*.plist'"
-        ;;
-    "all")
-        # No include patterns - analyze all files (subject to excludes and size limits)
-        ;;
-    *)
-        echo "❌ Invalid focus '$FOCUS'. Use: code, docs, config, or all"
-        exit 1
-        ;;
-esac
+## Limitations
 
-# Add optional parameters
-[[ -n "$BRANCH" ]] && CMD="$CMD -b '$BRANCH'"
-[[ -n "$TOKEN" ]] && CMD="$CMD -t '$TOKEN'"
+- **File Size**: Files over 1MB are summarized (not included in full)
+- **Binary Files**: Images, PDFs, and other binaries are listed but not included
+- **Large Repositories**: Repos with 500+ files may be sampled
+- **Rate Limits**: GitHub API rate limits apply (60 req/hour unauthenticated, 5000/hour authenticated)
 
-# Set output
-if [[ -n "$OUTPUT_FILE" ]]; then
-    CMD="$CMD -o '$OUTPUT_FILE'"
-else
-    CMD="$CMD -o -"  # stdout
-fi
-```
+## Error Handling
 
-### Step 4: Execute GitIngest Analysis
-```bash
-echo "🚀 Starting GitIngest analysis..."
-echo "Command: gitingest [options...]"
-echo ""
+- **404 Not Found**: Repository doesn't exist or is private (and you lack access)
+- **403 Forbidden**: Rate limit exceeded or insufficient permissions
+- **Invalid URL**: Provide full GitHub URL format
 
-# Execute the command
-eval "$CMD"
-EXIT_CODE=$?
+@include shared/research-patterns.yml#Mandatory_Research_Flows
 
-if [[ $EXIT_CODE -eq 0 ]]; then
-    echo ""
-    echo "✅ Analysis completed successfully!"
-    [[ -n "$OUTPUT_FILE" ]] && echo "📄 Output saved to: $OUTPUT_FILE"
-else
-    echo ""
-    echo "❌ Analysis failed with exit code: $EXIT_CODE"
-    echo ""
-    echo "💡 Troubleshooting tips:"
-    echo "   • Check if the repository URL is accessible"
-    echo "   • For private repos, ensure you have a valid GitHub token"
-    echo "   • Verify the branch name if specified"
-    echo "   • Try with a larger max file size if files are being skipped"
-fi
-```
+@include shared/docs-patterns.yml#Standard_Notifications
 
-### Step 5: Usage Examples
-```bash
-# Show usage examples on success
-if [[ $EXIT_CODE -eq 0 && -z "$OUTPUT_FILE" ]]; then
-    echo ""
-    echo "💡 Usage examples:"
-    echo "   gitingest https://github.com/owner/repo"
-    echo "   gitingest https://github.com/owner/repo docs"
-    echo "   gitingest https://github.com/owner/repo code 100"
-    echo "   gitingest https://github.com/owner/repo config 50 main"
-    echo "   gitingest https://github.com/owner/repo all 50 main token analysis.txt"
-fi
-```
-
-## Key Features
-
-### Smart Focus Modes
-- **code**: Source files (.py, .js, .ts, .go, .rs, etc.)
-- **docs**: Documentation (.md, README, LICENSE, etc.)
-- **config**: Configuration files (.json, .yaml, Dockerfile, etc.)
-- **all**: All files (subject to size limits and common excludes)
-
-### Intelligent Filtering
-- Automatically excludes common noise (node_modules, build artifacts, logs)
-- Configurable file size limits (default 50KB per file)
-- Branch-specific analysis
-- Private repository support with tokens
-
-### Efficient Processing
-- No full repository cloning
-- Streaming output for immediate use
-- Memory-efficient for large repositories
-- Token-aware content extraction
-
-This enhanced command provides focused, efficient repository analysis perfect for AI-assisted development without the overhead of full cloning.
+@include shared/universal-constants.yml#Standard_Messages_Templates

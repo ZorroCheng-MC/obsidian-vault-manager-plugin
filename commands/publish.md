@@ -77,11 +77,71 @@ After successful publish:
 /publish my-article
 ```
 
+## Password Protection (Sharehub Feature)
+
+**Sharehub supports password-protected documents via frontmatter!**
+
+### To Make a Document Private:
+
+Add `access: private` to the frontmatter:
+
+```yaml
+---
+title: "Confidential Document"
+access: private
+---
+```
+
+**How it works:**
+- Documents **without** `access: private` → Publicly accessible
+- Documents **with** `access: private` → Password-protected
+- **Password**: "maco" (shared password for all private documents)
+- **Session**: Password remembered until browser closed
+
+### Example: Publishing Private Document
+
+**Frontmatter:**
+```yaml
+---
+title: "Claude Dev Users: Multi-User Docker Environment"
+tags:
+  - repository
+  - docker
+  - infrastructure
+access: private
+---
+```
+
+**Result:**
+- Document published to sharehub
+- Requires password "maco" to view
+- Listed in index with 🔒 lock icon (after login)
+
+### Index Page Behavior
+
+- **Before login**: Shows only public documents
+- **After login**: Shows all documents (public + private) with 🔒 icons
+
+### Publishing Workflow
+
+1. **Add `access: private` to frontmatter** (if needed)
+2. **Run `/publish filename.md`**
+3. **Script publishes** to sharehub/documents/
+4. **GitHub Pages builds** (~60 seconds)
+5. **Document accessible** with password protection
+
+### Important Notes
+
+- **Default**: Documents are public unless `access: private` is specified
+- **Password**: All private documents use "maco"
+- **No folder restrictions**: Protection is tag-based, not folder-based
+- **Session storage**: Login persists until browser closed
+
 ## Quality Checklist
 
 Before publishing, verify:
 - [ ] Note has proper frontmatter (title, tags, date)
+- [ ] Add `access: private` if document contains sensitive information
 - [ ] Images exist in vault at specified paths
 - [ ] Image paths are relative (./images/ or images/)
-- [ ] No sensitive information in note or images
-- [ ] Note is ready for public viewing
+- [ ] Note is ready for viewing (public or password-protected)

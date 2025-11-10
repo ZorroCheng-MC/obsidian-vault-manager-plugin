@@ -42,3 +42,4 @@ build/
 # Personal Notes (don't commit examples)
 examples/.claude/settings.local.json
 examples/.claude/config.sh
+obsidian-vault-manager-plugin/

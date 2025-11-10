@@ -3,9 +3,13 @@ description: Smart capture with AI-powered auto-tagging for Bases filtering
 argument-hint: [content to capture]
 allowed-tools:
   - Skill(obsidian-vault-manager)
+  - SlashCommand(/gitingest)
   - Bash(*)
   - mcp__fetch__fetch
-  - mcp__gitingest__gitingest-analyze
+  - mcp__MCP_DOCKER__get_file_contents
+  - mcp__MCP_DOCKER__list_commits
+  - mcp__MCP_DOCKER__get_video_info
+  - mcp__MCP_DOCKER__get_transcript
   - mcp__obsidian-mcp-tools__create_vault_file
 ---
 
@@ -21,7 +25,7 @@ Execute the `obsidian-vault-manager` skill for universal content capture.
 The skill will:
 1. **Analyze content type** from input
    - YouTube URL → Video capture workflow
-   - GitHub URL → Repository analysis workflow
+   - **GitHub URL → Delegate to `/gitingest` command**
    - HTTP/HTTPS URL → Article capture workflow
    - Plain text → Idea capture workflow
 
@@ -37,6 +41,36 @@ The skill will:
    - Structured content sections
    - Tag analysis and Bases filtering suggestions
 
+## GitHub Repository Handling (IMPORTANT)
+
+**When a GitHub URL is detected:**
+
+1. **Extract GitHub URL** from `$ARGUMENTS`
+2. **Call `/gitingest` command** using `SlashCommand` tool:
+   ```
+   SlashCommand("/gitingest https://github.com/owner/repo")
+   ```
+3. **The `/gitingest` command will:**
+   - Use MCP Docker GitHub tools (`get_file_contents`, `list_commits`)
+   - Analyze repository structure and contents
+   - Generate comprehensive markdown with proper tagging
+   - Auto-save to `/Users/zorro/Documents/Obsidian/Claudecode/`
+4. **Return success** - `/gitingest` handles the complete workflow
+
+**DO NOT:**
+- ❌ Manually call `mcp__gitingest__*` tools (deprecated)
+- ❌ Try to analyze GitHub repos yourself
+- ❌ Use the obsidian-vault-manager skill for GitHub URLs
+
+**Example Flow:**
+```
+User: /capture https://github.com/anthropics/claude-code
+
+→ Detect: GitHub URL
+→ Execute: SlashCommand("/gitingest https://github.com/anthropics/claude-code")
+→ Result: Complete repository analysis saved to Obsidian
+```
+
 ## Content Routing
 
 The skill automatically routes based on input:
@@ -49,8 +83,8 @@ The skill automatically routes based on input:
 
 **GitHub Repositories:**
 - Pattern: `github.com/owner/repo`
-- Uses gitingest for analysis
-- Creates repository overview
+- Uses `/gitingest` command (MCP Docker GitHub tools)
+- Creates comprehensive repository analysis
 - Tags: `[repository, {language}, {topics}, inbox, technical]`
 
 **Web Articles:**
@@ -73,9 +107,10 @@ All tags come from the predefined taxonomy in the skill:
 video, idea, article, study-guide, repository, reference, project
 
 ### Topics (2-4 tags)
-AI, productivity, knowledge-management, development, learning, research,
-writing, tools, business, design, automation, data-science, web-development,
-personal-growth, finance
+AI, Claude, Gemini, product, marketing, projects, workflow, architecture,
+design, UI-UX, coding, productivity, knowledge-management, development,
+learning, research, writing, tools, business, automation, data-science,
+web-development, personal-growth, finance
 
 ### Status (1 tag)
 inbox, processing, evergreen, published, archived, needs-review
