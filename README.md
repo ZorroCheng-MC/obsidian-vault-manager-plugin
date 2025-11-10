@@ -21,46 +21,94 @@ This plugin supercharges your Obsidian vault with AI-powered automation through 
 
 ---
 
-## Quick Start (3 Steps)
+## Requirements (Install These First!)
 
-### 1️⃣ Install Required MCP Server & Obsidian Plugin
+Before installing this plugin, make sure you have:
 
-**Install MCP Docker** (provides GitHub, YouTube, Firecrawl, and more):
+### 1. Docker Desktop with MCP Toolkit
+
+**Install Docker Desktop:**
+- Download from [docker.com](https://www.docker.com/products/docker-desktop/)
+- Install and start Docker Desktop
+
+**Connect Claude Code to MCP Toolkit:**
+1. Open **Docker Desktop**
+2. Go to **MCP Toolkit** (in left sidebar)
+3. Click **Clients** tab
+4. Find **Claude Code** → Click **Disconnect** (if already connected) then reconnect
+5. This gives Claude Code access to all MCP Docker servers
+
+**What you get:** GitHub Official, YouTube Transcripts, Firecrawl, Obsidian, Context7, Fetch, Memory, and Perplexity tools!
+
+### 2. Obsidian MCP Tools Plugin
+
+**Install in Obsidian:**
+1. Open **Obsidian** → Settings → Community Plugins
+2. Browse and search for **"MCP Tools"**
+3. Install and enable
+4. Click **"Install Server"** button in the plugin settings
+
+### 3. System Tools
+
+**Required for publishing feature:**
 ```bash
-claude mcp add docker
+# macOS
+brew install git jq
+
+# Linux
+sudo apt install git jq
 ```
 
-**Install Obsidian MCP Tools Plugin:**
-1. Open **Obsidian** → Settings → Community Plugins
-2. Search for **"MCP Tools"**
-3. Install and enable
-4. Click **"Install Server"** button in plugin settings
+---
 
-### 2️⃣ Install Claude Code Plugin
+## Installation
+
+Now that you have the requirements, install the plugin:
 
 ```bash
 # Install from Claude Code marketplace
 claude plugin add obsidian-vault-manager
 ```
 
-### 3️⃣ Run Setup in Your Vault
+---
+
+## Quick Start
+
+### 1️⃣ Navigate to Your Vault
 
 ```bash
-# Go to your vault directory
+# Go to your Obsidian vault directory
 cd /Users/yourname/Documents/Obsidian/YourVault
 
 # Start Claude Code
 claude
+```
 
-# Run setup wizard
+### 2️⃣ Run Setup Wizard
+
+```bash
+# Inside Claude Code, run:
 /setup
 ```
 
 The setup wizard will:
 - ✅ Detect your vault path automatically
 - ✅ Check for required dependencies (git, jq)
-- ✅ Generate configuration files
+- ✅ Generate configuration files (.claude/settings.local.json, .claude/config.sh)
 - ✅ Validate everything works
+
+### 3️⃣ Start Using Commands!
+
+```bash
+# Capture a YouTube video
+/capture https://youtube.com/watch?v=abc123
+
+# Analyze a GitHub repository
+/gitingest https://github.com/user/repo
+
+# Publish a note to GitHub Pages
+/publish my-note.md
+```
 
 **That's it!** You're ready to use the plugin.
 
@@ -147,22 +195,18 @@ When you run `/capture` or other commands, Claude Code:
 
 ---
 
-## Requirements
+## Detailed Requirements
 
-### Essential Requirements
+### Essential Software
 
 - **Claude Code** (version 2.0.36+)
 - **Obsidian** (any recent version)
+- **Docker Desktop** (for MCP Toolkit)
 
-### Required MCP Server
+### MCP Docker Servers (via Docker Desktop MCP Toolkit)
 
-**MCP Docker** - The ONLY MCP server you need:
+Connect Claude Code to Docker Desktop's MCP Toolkit to get access to:
 
-```bash
-claude mcp add docker
-```
-
-This single MCP server provides all the tools this plugin uses:
 - ✅ **GitHub Official** (10 tools) - Repository analysis, file reading, commits, PRs
 - ✅ **YouTube Transcripts** (3 tools) - Video info, transcripts with timestamps
 - ✅ **Firecrawl** (5 tools) - Web scraping, article fetching, crawling
@@ -172,16 +216,13 @@ This single MCP server provides all the tools this plugin uses:
 - ✅ **Memory (Reference)** (9 tools) - Knowledge graph for note relationships
 - ✅ **Perplexity** (3 tools) - AI-powered web search
 
-**No other MCP servers needed!** Everything runs through Docker MCP.
+**How to connect:** Docker Desktop → MCP Toolkit → Clients tab → Connect Claude Code
 
 ### Required Obsidian Plugin
 
-**Obsidian MCP Tools** (for vault operations):
+**Obsidian MCP Tools** - For vault file operations
 
-1. Open Obsidian → Settings → Community Plugins
-2. Search for **"MCP Tools"**
-3. Install and enable
-4. Click **"Install Server"** button in plugin settings
+Install via: Obsidian → Settings → Community Plugins → Search "MCP Tools" → Install → Enable → Click "Install Server"
 
 ### Optional (For Advanced Features)
 
@@ -192,17 +233,9 @@ This single MCP server provides all the tools this plugin uses:
 - GitHub account (free)
 - GitHub Pages repository configured
 
-**For Local REST API (Alternative to MCP Tools):**
-- [Local REST API](https://github.com/coddingtonbear/obsidian-local-rest-api) - Configure API key
+### System Tools
 
-### System Tools (Auto-checked by Setup Wizard)
-
-The `/setup` wizard will check for:
-- `git` (for publishing)
-- `jq` (for JSON processing)
-- `bash` (pre-installed on macOS/Linux)
-
-**Install if missing:**
+Required for the `/publish` command:
 ```bash
 # macOS
 brew install git jq
@@ -210,6 +243,8 @@ brew install git jq
 # Linux
 sudo apt install git jq
 ```
+
+The `/setup` wizard will automatically check for these and guide you if missing.
 
 ---
 
