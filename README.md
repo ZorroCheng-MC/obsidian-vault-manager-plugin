@@ -163,15 +163,16 @@ claude mcp add docker
 ```
 
 This single MCP server provides all the tools this plugin uses:
-- ✅ GitHub tools (repository analysis, file reading, commits)
-- ✅ YouTube tools (video info, transcripts)
-- ✅ Firecrawl (web scraping and article fetching)
-- ✅ Memory/knowledge graph
-- ✅ Obsidian integration
-- ✅ Perplexity AI search
-- ✅ And more...
+- ✅ **GitHub Official** (10 tools) - Repository analysis, file reading, commits, PRs
+- ✅ **YouTube Transcripts** (3 tools) - Video info, transcripts with timestamps
+- ✅ **Firecrawl** (5 tools) - Web scraping, article fetching, crawling
+- ✅ **Obsidian** (12 tools) - Vault file operations, search, note management
+- ✅ **Context7** (2 tools) - Library documentation lookup
+- ✅ **Fetch (Reference)** (1 tool) - General web fetching
+- ✅ **Memory (Reference)** (9 tools) - Knowledge graph for note relationships
+- ✅ **Perplexity** (3 tools) - AI-powered web search
 
-**No other MCP servers needed!**
+**No other MCP servers needed!** Everything runs through Docker MCP.
 
 ### Required Obsidian Plugin
 
