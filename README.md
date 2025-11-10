@@ -31,14 +31,26 @@ Before installing this plugin, make sure you have:
 - Download from [docker.com](https://www.docker.com/products/docker-desktop/)
 - Install and start Docker Desktop
 
-**Connect Claude Code to MCP Toolkit:**
+**Install MCP Servers from Catalog:**
 1. Open **Docker Desktop**
 2. Go to **MCP Toolkit** (in left sidebar)
-3. Click **Clients** tab
-4. Find **Claude Code** → Click **Disconnect** (if already connected) then reconnect
-5. This gives Claude Code access to all MCP Docker servers
+3. Click **Catalog** tab (shows 301+ available servers)
+4. Install these servers (search and click "Add"):
+   - **GitHub Official** - Repository analysis, file reading, commits, PRs
+   - **YouTube Transcripts** - Video info and transcripts
+   - **Firecrawl** - Web scraping and article fetching
+   - **Obsidian** - Vault file operations
+   - **Context7** - Library documentation lookup
+   - **Fetch (Reference)** - General web fetching
+   - **Memory (Reference)** - Knowledge graph for notes
+   - **Perplexity** - AI-powered web search
 
-**What you get:** GitHub Official, YouTube Transcripts, Firecrawl, Obsidian, Context7, Fetch, Memory, and Perplexity tools!
+**Connect Claude Code to MCP Toolkit:**
+1. In Docker Desktop, go to **MCP Toolkit** → **Clients** tab
+2. Find **Claude Code** → Click **Connect** (or **Disconnect** then reconnect if already connected)
+3. This gives Claude Code access to all your installed MCP servers
+
+**Verify:** Go to **My servers** tab and you should see all 9 servers listed!
 
 ### 2. Obsidian MCP Tools Plugin
 
