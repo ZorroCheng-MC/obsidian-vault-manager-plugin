@@ -21,33 +21,29 @@ This plugin supercharges your Obsidian vault with AI-powered automation through 
 
 ---
 
-## Quick Start (4 Steps)
+## Quick Start (3 Steps)
 
-### 1️⃣ Install Required MCP Servers
+### 1️⃣ Install Required MCP Server & Obsidian Plugin
 
+**Install MCP Docker** (provides GitHub, YouTube, Firecrawl, and more):
 ```bash
-# GitHub MCP (for repository analysis)
-claude mcp add @modelcontextprotocol/server-github
-
-# Docker MCP (for GitHub tools, YouTube, web fetch)
 claude mcp add docker
 ```
 
-### 2️⃣ Install Obsidian Plugin
-
+**Install Obsidian MCP Tools Plugin:**
 1. Open **Obsidian** → Settings → Community Plugins
 2. Search for **"MCP Tools"**
 3. Install and enable
 4. Click **"Install Server"** button in plugin settings
 
-### 3️⃣ Install Claude Code Plugin
+### 2️⃣ Install Claude Code Plugin
 
 ```bash
 # Install from Claude Code marketplace
 claude plugin add obsidian-vault-manager
 ```
 
-### 4️⃣ Run Setup in Your Vault
+### 3️⃣ Run Setup in Your Vault
 
 ```bash
 # Go to your vault directory
@@ -158,27 +154,33 @@ When you run `/capture` or other commands, Claude Code:
 - **Claude Code** (version 2.0.36+)
 - **Obsidian** (any recent version)
 
-### Required MCP Servers
+### Required MCP Server
 
-Install these MCP servers for the plugin to work:
+**MCP Docker** - The ONLY MCP server you need:
 
 ```bash
-# GitHub MCP (for /gitingest and repository analysis)
-claude mcp add @modelcontextprotocol/server-github
-
-# Docker MCP (provides GitHub tools, YouTube, web fetch)
 claude mcp add docker
 ```
 
-### Required Obsidian Plugins
+This single MCP server provides all the tools this plugin uses:
+- ✅ GitHub tools (repository analysis, file reading, commits)
+- ✅ YouTube tools (video info, transcripts)
+- ✅ Firecrawl (web scraping and article fetching)
+- ✅ Memory/knowledge graph
+- ✅ Obsidian integration
+- ✅ Perplexity AI search
+- ✅ And more...
 
-Install and enable these plugins in Obsidian:
+**No other MCP servers needed!**
 
-1. **Obsidian MCP Tools** (Required for vault operations)
-   - Open Obsidian → Settings → Community Plugins
-   - Search for "MCP Tools"
-   - Install and enable
-   - Click "Install Server" button in plugin settings
+### Required Obsidian Plugin
+
+**Obsidian MCP Tools** (for vault operations):
+
+1. Open Obsidian → Settings → Community Plugins
+2. Search for **"MCP Tools"**
+3. Install and enable
+4. Click **"Install Server"** button in plugin settings
 
 ### Optional (For Advanced Features)
 
