@@ -45,12 +45,34 @@ Before installing this plugin, make sure you have:
    - **Memory (Reference)** - Knowledge graph for notes
    - **Perplexity** - AI-powered web search
 
+**Configure API Keys (Required for some servers):**
+
+Some MCP servers require API keys to function:
+
+- **GitHub Official**:
+  - Get token: [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens)
+  - Required scopes: `repo` (for private repos), `public_repo` (for public repos)
+
+- **Firecrawl**:
+  - Get API key: [firecrawl.dev](https://www.firecrawl.dev/) (sign up for free tier)
+
+- **Perplexity**:
+  - Get API key: [Perplexity API](https://www.perplexity.ai/settings/api) (requires Perplexity account)
+
+**How to add API keys:**
+1. In Docker Desktop → MCP Toolkit → **My servers** tab
+2. Click on the server that needs configuration
+3. Add your API key in the server settings
+4. Save and restart the server
+
+**Note:** YouTube, Obsidian, Context7, Fetch, and Memory don't require API keys.
+
 **Connect Claude Code to MCP Toolkit:**
 1. In Docker Desktop, go to **MCP Toolkit** → **Clients** tab
 2. Find **Claude Code** → Click **Connect** (or **Disconnect** then reconnect if already connected)
 3. This gives Claude Code access to all your installed MCP servers
 
-**Verify:** Go to **My servers** tab and you should see all 9 servers listed!
+**Verify:** Go to **My servers** tab and you should see all 9 servers listed with green status!
 
 ### 2. Obsidian MCP Tools Plugin
 
@@ -77,12 +99,25 @@ sudo apt install git jq
 
 Now that you have the requirements installed, you can install this plugin:
 
-### Option 1: Browse and Install (Recommended)
+### Step 1: Add Plugin Marketplace
+
+First, add this plugin's marketplace to Claude Code:
 
 ```bash
 # Start Claude Code
 claude
 
+# Add this plugin's marketplace
+/plugin marketplace add ZorroCheng-MC/obsidian-vault-manager-plugin
+```
+
+This adds the GitHub repository as a plugin marketplace source.
+
+### Step 2: Install the Plugin
+
+**Option A: Browse and Install (Recommended)**
+
+```bash
 # Browse available plugins
 /plugin
 
@@ -95,21 +130,16 @@ This opens an interactive menu where you can:
 - See installation status
 - Install with one click
 
-### Option 2: Direct Install
+**Option B: Direct Install**
 
-If you already know the plugin name:
+If you prefer command-line installation:
 
 ```bash
-# Start Claude Code
-claude
-
 # Install directly
 /plugin install obsidian-vault-manager
 ```
 
-### Verify Installation
-
-After installation, verify the plugin is available:
+### Step 3: Verify Installation
 
 ```bash
 # List installed plugins
