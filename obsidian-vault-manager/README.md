@@ -1,28 +1,51 @@
-# Obsidian Vault Manager Skill
+# Obsidian Vault Manager Plugin
 
 Manage an AI-powered Obsidian knowledge base with automatic organization and GitHub Pages publishing.
 
 ## Features
 
-- **YouTube Video Capture**: Fetch transcripts and create comprehensive notes
-- **Smart AI Tagging**: Automatic tagging based on content analysis
-- **Bundled Scripts**: Executable scripts for transcript fetching and validation
+- **YouTube Video Capture**: Fetch transcripts and create comprehensive notes (`/youtube-note`)
+- **Smart AI Tagging**: Automatic tagging based on content analysis (`/capture`, `/idea`)
+- **Bundled Scripts**: Executable scripts for transcript fetching and publishing
 - **Template System**: Consistent note structure across all content types
-- **Optional Validation**: Quality enforcement through validation scripts
+- **GitHub Pages Publishing**: Publish notes to your public sharehub (`/publish`)
 
 ## Installation
 
-### Basic Installation
+### Claude Code CLI (Recommended)
 
-1. Extract this skill to `~/.claude/skills/obsidian-vault-manager/`
-2. The skill works immediately in Claude Desktop
-3. For Claude Code CLI, the `/youtube-note` command will invoke this skill
+1. **Add the plugin marketplace**:
+```bash
+/plugin marketplace add ZorroCheng-MC/obsidian-vault-manager-plugin
+```
 
-### Verify Installation
+2. **Install the plugin**:
+```bash
+# Option A: Browse available plugins
+/plugin
+
+# Option B: Install directly
+/plugin install obsidian-vault-manager@ZorroCheng-MC/obsidian-vault-manager-plugin
+```
+
+3. **Verify installation**:
+```bash
+/plugin list
+# Should show: obsidian-vault-manager
+```
+
+### Manual Installation (Legacy)
+
+For development or when marketplace is unavailable:
 
 ```bash
-ls ~/.claude/skills/obsidian-vault-manager/
-# Should show: SKILL.md, scripts/, templates/, README.md
+# Clone to Claude plugins directory
+mkdir -p ~/.claude/plugins
+cd ~/.claude/plugins
+git clone https://github.com/ZorroCheng-MC/obsidian-vault-manager-plugin.git obsidian-vault-manager
+
+# Make scripts executable
+chmod +x ~/.claude/plugins/obsidian-vault-manager/scripts/core/*.sh
 ```
 
 ## Bundled Resources

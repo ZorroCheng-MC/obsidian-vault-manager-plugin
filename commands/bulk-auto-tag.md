@@ -15,10 +15,10 @@ allowed-tools:
 
 ## Tag Taxonomy Reference
 
-Use the same taxonomy as `/auto-tag-capture`:
+Use the same taxonomy as `/capture`:
 
 **Content Types:** idea, video, article, study-guide, repository, reference, project
-**Topics:** AI, productivity, knowledge-management, development, learning, research, writing, tools, business, design, automation, data-science, web-development, personal-growth, finance
+**Topics:** AI, Claude, Gemini, product, marketing, projects, workflow, architecture, design, UI-UX, coding, productivity, knowledge-management, development, learning, research, writing, tools, business, automation, data-science, web-development, personal-growth, finance
 **Status:** inbox, processing, evergreen, published, archived, needs-review
 **Metadata:** high-priority, quick-read, deep-dive, technical, conceptual, actionable, tutorial, inspiration
 

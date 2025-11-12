@@ -1,7 +1,14 @@
 ---
 name: obsidian-vault-manager
 description: Manage Obsidian knowledge base - capture ideas, YouTube videos, articles, repositories, create study guides, and publish to GitHub Pages. Use smart AI tagging for automatic organization.
-trigger: When user wants to capture content, create study guides, search vault, tag notes, or publish to GitHub Pages
+allowed-tools:
+  - mcp__obsidian-mcp-tools__*
+  - mcp__MCP_DOCKER__create_or_update_file
+  - mcp__MCP_DOCKER__push_files
+  - mcp__MCP_DOCKER__get_file_contents
+  - mcp__MCP_DOCKER__fetch
+  - mcp__MCP_DOCKER__gitingest-analyze
+  - Bash(uvx youtube_transcript_api:*)
 ---
 
 # Obsidian Vault Manager
@@ -82,7 +89,7 @@ When user provides a YouTube URL:
    SKILL_DIR="$HOME/.claude/skills/obsidian-vault-manager"
    TRANSCRIPT=$("$SKILL_DIR/scripts/core/fetch-youtube-transcript.sh" "$VIDEO_ID")
    ```
-3. Use `mcp__fetch__fetch` to get YouTube page for metadata (title, channel, description)
+3. Use `get_transcript` to get video transcript and `fetch` to get YouTube page for metadata (title, channel, description)
 
 **Step 2: Analyze Content for Smart Tags**
 Determine:
@@ -202,7 +209,7 @@ Use `mcp__obsidian-mcp-tools__create_vault_file` with the substituted template c
 When user provides a GitHub URL:
 
 **Step 1: Analyze Repository**
-Use `mcp__gitingest__gitingest-analyze` with:
+Use `gitingest-analyze` with:
 - `source`: GitHub URL
 - `include_patterns`: `["*.md", "*.py", "*.js", "*.ts"]` (adapt to repo language)
 - `max_file_size`: 10485760 (10MB)
@@ -254,7 +261,7 @@ priority: medium
 When user provides web article URL:
 
 **Step 1: Fetch Content**
-Use `mcp__fetch__fetch` to get article content
+Use `mcp__MCP_DOCKER__fetch` to get article content
 
 **Step 2: Create Article Note**
 
@@ -303,7 +310,7 @@ priority: medium
 When user requests study guide from URL or content:
 
 **Step 1: Fetch Content**
-- If URL: use `mcp__fetch__fetch`
+- If URL: use `mcp__MCP_DOCKER__fetch`
 - If file: use `mcp__obsidian-mcp-tools__get_vault_file`
 - If direct text: use provided content
 
@@ -375,7 +382,7 @@ Use `mcp__obsidian-mcp-tools__create_vault_file` with the substituted template c
 
 When user asks to search vault:
 
-**Use Local REST API Method:**
+**Use Semantic Search:**
 
 Since Smart Connections is configured, use `mcp__obsidian-mcp-tools__search_vault_smart` with the query:
 
@@ -532,7 +539,7 @@ sleep 60
 
 **Step 4: Verify Published Page**
 
-Use `mcp__fetch__fetch` to verify the page is live:
+Use `mcp__MCP_DOCKER__fetch` to verify the page is live:
 ```
 url: https://zorrocheng-mc.github.io/sharehub/documents/${NOTE_FILE%.md}.html
 max_length: 2000
@@ -564,10 +571,12 @@ Check the fetched content for:
 - `mcp__obsidian-mcp-tools__patch_vault_file` - Update frontmatter/sections
 - `mcp__obsidian-mcp-tools__search_vault_smart` - Semantic search
 - `mcp__obsidian-mcp-tools__list_vault_files` - List files
-- `mcp__fetch__fetch` - Get web content
-- `mcp__gitingest__gitingest-analyze` - Analyze repositories
-- `mcp__github__create_or_update_file` - Publish to GitHub
-- `mcp__git__git_status` - Check git status
+- `mcp__MCP_DOCKER__fetch` - Get web content
+- `mcp__MCP_DOCKER__gitingest-analyze` - Analyze repositories
+- `mcp__MCP_DOCKER__create_or_update_file` - Create/update single file on GitHub
+- `mcp__MCP_DOCKER__push_files` - Push multiple files to GitHub in one commit
+- `mcp__MCP_DOCKER__get_file_contents` - Read files from GitHub
+- YouTube transcript via bash script (`uvx youtube_transcript_api`)
 
 ## Response Format
 
