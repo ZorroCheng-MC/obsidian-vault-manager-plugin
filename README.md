@@ -17,126 +17,146 @@ This plugin supercharges your Obsidian vault with AI-powered automation through 
 - 🌐 **GitHub Pages Publishing** - Publish notes to the web with password protection
 - 🎯 **Smart Templates** - Pre-built templates for videos, articles, ideas, and repositories
 
-**[See Full Feature List & Examples →](PLUGIN_FEATURES.md)**
+**[See Full Feature List & Examples →](https://zorrocheng-mc.github.io/sharehub/documents/obsidian-vault-manager-plugin/PLUGIN_FEATURES.html)**
+
+---
+
+## Complete Setup Guide
+
+For the **complete end-to-end setup** of the entire KnowledgeFactory system (Claude Code, Obsidian, Docker MCP, this plugin, and publishing), see:
+
+**📘 [KnowledgeFactory Quick Setup Cheatsheet](https://zorrocheng-mc.github.io/sharehub/documents/KnowledgeFactory/KnowledgeFactory-Quick-Setup-Cheatsheet.html)**
+
+The cheatsheet provides a holistic view including:
+- All prerequisite installations (Claude Pro/Max, Docker Desktop, Obsidian, Claude Code)
+- Complete Obsidian plugin setup (MCP Tools, Terminal, Smart Connections, Templater)
+- Docker MCP server configuration with API keys
+- GitHub Pages publishing setup
+- Three-tier publishing model (Private, Trusted Circle, Public)
+
+
+This README focuses specifically on **plugin installation and commands**.
 
 ---
 
 ## Requirements (Install These First!)
 
-Before installing this plugin, make sure you have:
+Before installing this plugin, you need:
 
-### 1. Docker Desktop with MCP Toolkit
+### 1. Claude Pro or Max Subscription
 
-**Install Docker Desktop:**
-- Download from [docker.com](https://www.docker.com/products/docker-desktop/)
+- **Required**: Claude Pro ($20/mo) or Claude Max ($50/mo)
+- **Sign up**: [claude.ai/upgrade](https://claude.ai/upgrade)
+- Provides access to Claude Code and advanced AI capabilities
+
+### 2. Desktop Applications
+
+**Claude Code**
+- Download from [claude.ai/code](https://claude.ai/code)
+- Install and sign in with Claude Pro/Max account
+
+**Obsidian**
+- Download from [obsidian.md/download](https://obsidian.md/download)
+- Install, launch once, create or open your vault
+
+**Docker Desktop**
+- Download from [docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/)
 - Install and start Docker Desktop
+- Verify: `docker --version`
 
-**Install MCP Servers from Catalog:**
-1. Open **Docker Desktop**
-2. Go to **MCP Toolkit** (in left sidebar)
-3. Click **Catalog** tab (shows 301+ available servers)
-4. Install these servers (search and click "Add"):
-   - **GitHub Official** - Repository analysis, file reading, commits, PRs
-   - **YouTube Transcripts** - Video info and transcripts
-   - **Firecrawl** - Web scraping and article fetching
-   - **Obsidian** - Vault file operations
-   - **Context7** - Library documentation lookup
-   - **Fetch (Reference)** - General web fetching
-   - **Memory (Reference)** - Knowledge graph for notes
-   - **Perplexity** - AI-powered web search
+### 3. Required Obsidian Plugins
 
-**Configure API Keys (Required for some servers):**
+Install these in **Obsidian → Settings → Community plugins** (turn off Safe Mode first):
 
-Some MCP servers require API keys to function:
+1. **MCP Tools** - Core MCP integration (click "Install Server" button after enabling)
+2. **Local REST API** - Auto-installed by MCP Tools, verify it's enabled
+3. **Terminal** - Integrated terminal in Obsidian (by polyipseity)
+4. **Smart Connections** - Semantic search (required for `/semantic-search` command)
+5. **Templater** - Advanced templates (required for advanced `/capture` templates)
 
-- **GitHub Official**:
-  - Get token: [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens)
-  - Required scopes: `repo` (for private repos), `public_repo` (for public repos)
+**CRITICAL**: After installing MCP Tools + Local REST API:
+- Go to **Settings → Community plugins → Local REST API → Copy API Key**
+- Save this key - you'll need it for Docker MCP Obsidian server configuration
 
-- **Firecrawl**:
-  - Get API key: [firecrawl.dev](https://www.firecrawl.dev/) (sign up for free tier)
+### 4. Docker MCP Servers
 
-- **Perplexity**:
-  - Get API key: [Perplexity API](https://www.perplexity.ai/settings/api) (requires Perplexity account)
+Install via **Docker Desktop → MCP Toolkit → Catalog**:
 
-**How to add API keys:**
-1. In Docker Desktop → MCP Toolkit → **My servers** tab
-2. Click on the server that needs configuration
-3. Add your API key in the server settings
-4. Save and restart the server
+**Required (3):**
+- **GitHub Official** (needs API key from [github.com/settings/tokens](https://github.com/settings/tokens))
+- **YouTube Transcripts** (no API key needed)
+- **Obsidian** (needs Local REST API key from step 3)
 
-**Note:** YouTube, Obsidian, Context7, Fetch, and Memory don't require API keys.
+**Recommended (3):**
+- **Firecrawl** (needs API key from [firecrawl.dev](https://firecrawl.dev), 1000 free/month)
+- **Context7** (no API key needed)
+- **Fetch (Reference)** (no API key needed)
 
-**Connect Claude Code to MCP Toolkit:**
-1. In Docker Desktop, go to **MCP Toolkit** → **Clients** tab
-2. Find **Claude Code** → Click **Connect** (or **Disconnect** then reconnect if already connected)
-3. This gives Claude Code access to all your installed MCP servers
+**Optional (2):**
+- **Memory (Reference)** (no API key needed)
+- **Perplexity** (needs API key from [perplexity.ai/settings/api](https://perplexity.ai/settings/api))
 
-**Verify:** Go to **My servers** tab and you should see all 9 servers listed with green status!
+**After installing servers:**
+1. Configure API keys in **Docker Desktop → MCP Toolkit → My servers** (click server → add keys → save & restart)
+2. Connect to Claude Code: **MCP Toolkit → Clients → Claude Code → Connect**
+3. Verify all servers show green status
 
-### 2. Obsidian MCP Tools Plugin
+### 5. System Tools
 
-**Install in Obsidian:**
-1. Open **Obsidian** → Settings → Community Plugins
-2. Browse and search for **"MCP Tools"**
-3. Install and enable
-4. Click **"Install Server"** button in the plugin settings
+Required for `/publish` command:
 
-### 3. System Tools
-
-**Required for publishing feature:**
 ```bash
 # macOS
 brew install git jq
 
 # Linux
 sudo apt install git jq
+
+# Windows
+choco install git jq
 ```
+
+**For detailed setup with screenshots and troubleshooting**, see the [KnowledgeFactory Quick Setup Cheatsheet](https://zorrocheng-mc.github.io/sharehub/documents/KnowledgeFactory/KnowledgeFactory-Quick-Setup-Cheatsheet.html).
 
 ---
 
 ## Installation
 
-Now that you have the requirements installed, you can install this plugin:
-
 ### Step 1: Add Plugin Marketplace
 
-First, add this plugin's marketplace to Claude Code:
+In your terminal, start Claude Code and add this plugin's marketplace:
 
 ```bash
+# Navigate to your Obsidian vault
+cd ~/Documents/Obsidian/YourVault
+
 # Start Claude Code
 claude
 
-# Add this plugin's marketplace
+# Add plugin marketplace
 /plugin marketplace add ZorroCheng-MC/obsidian-vault-manager-plugin
 ```
-
-This adds the GitHub repository as a plugin marketplace source.
 
 ### Step 2: Install the Plugin
 
 **Option A: Browse and Install (Recommended)**
 
 ```bash
-# Browse available plugins
+# Browse available plugins interactively
 /plugin
-
-# Search for "obsidian-vault-manager" and select it to install
 ```
 
 This opens an interactive menu where you can:
-- Browse all available plugins
+- See all available plugins from configured marketplaces
 - Read plugin descriptions
 - See installation status
-- Install with one click
+- Install with one selection
 
 **Option B: Direct Install**
 
-If you prefer command-line installation:
-
 ```bash
-# Install directly
-/plugin install obsidian-vault-manager
+# Install directly by specifying marketplace
+/plugin install obsidian-vault-manager@ZorroCheng-MC/obsidian-vault-manager-plugin
 ```
 
 ### Step 3: Verify Installation
@@ -156,7 +176,7 @@ You should see `obsidian-vault-manager` in the list.
 
 ```bash
 # Go to your Obsidian vault directory
-cd /Users/yourname/Documents/Obsidian/YourVault
+cd ~/Documents/Obsidian/YourVault
 
 # Start Claude Code
 claude
@@ -172,23 +192,45 @@ claude
 The setup wizard will:
 - ✅ Detect your vault path automatically
 - ✅ Check for required dependencies (git, jq)
-- ✅ Generate configuration files (.claude/settings.local.json, .claude/config.sh)
+- ✅ Prompt for sharehub path (if using `/publish` command)
+- ✅ Generate configuration files (`.claude/settings.local.json`, `.claude/config.sh`)
 - ✅ Validate everything works
 
 ### 3️⃣ Start Using Commands!
 
 ```bash
 # Capture a YouTube video
-/capture https://youtube.com/watch?v=abc123
+/youtube-note https://youtube.com/watch?v=abc123
 
 # Analyze a GitHub repository
 /gitingest https://github.com/user/repo
+
+# Quick idea capture
+/idea Use AI to automatically organize my notes
 
 # Publish a note to GitHub Pages
 /publish my-note.md
 ```
 
 **That's it!** You're ready to use the plugin.
+
+---
+
+## Available Commands
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `/setup` | Interactive setup wizard | `/setup` |
+| `/capture` | Universal content capture (YouTube, GitHub, articles, ideas) | `/capture https://youtube.com/watch?v=abc` |
+| `/youtube-note` | Capture YouTube video with transcript | `/youtube-note https://youtube.com/watch?v=abc` |
+| `/gitingest` | Analyze GitHub repository | `/gitingest https://github.com/user/repo` |
+| `/idea` | Quick idea capture with AI tagging | `/idea Use AI to organize notes` |
+| `/study-guide` | Generate study guide from content | `/study-guide my-note.md` |
+| `/semantic-search` | Find notes by meaning | `/semantic-search "productivity tips"` |
+| `/bulk-auto-tag` | Bulk AI tagging for existing notes | `/bulk-auto-tag "*.md"` |
+| `/publish` | Publish note to GitHub Pages | `/publish my-note.md` |
+
+**[See detailed command documentation with examples →](https://zorrocheng-mc.github.io/sharehub/documents/obsidian-vault-manager-plugin/PLUGIN_FEATURES.html)**
 
 ---
 
@@ -200,16 +242,13 @@ The setup wizard will:
 
 ```bash
 # YouTube video
-/capture https://youtube.com/watch?v=abc123
+/youtube-note https://youtube.com/watch?v=abc123
 
 # GitHub repository
-/capture https://github.com/user/repo
-
-# Web article
-/capture https://medium.com/article-url
+/gitingest https://github.com/user/repo
 
 # Quick idea
-/capture Use AI to automatically organize my notes
+/idea Use AI to automatically organize my notes
 ```
 
 The plugin will:
@@ -242,11 +281,11 @@ The plugin will:
 ### Semantic Search
 
 ```bash
-# Find notes by meaning
+# Find notes by meaning (requires Smart Connections plugin)
 /semantic-search "notes about productivity workflows"
 ```
 
-**[See More Examples & Commands →](PLUGIN_FEATURES.md)**
+**[See More Examples & Command Details →](https://zorrocheng-mc.github.io/sharehub/documents/obsidian-vault-manager-plugin/PLUGIN_FEATURES.html)**
 
 ---
 
@@ -257,14 +296,14 @@ This plugin adds **slash commands** to Claude Code that work inside your Obsidia
 ```
 Your Vault/
 ├── .claude/
-│   ├── settings.local.json  ← Plugin configuration (auto-generated)
-│   └── config.sh            ← Script settings (auto-generated)
+│   ├── settings.local.json  ← Plugin configuration (auto-generated by /setup)
+│   └── config.sh            ← Script settings (auto-generated by /setup)
 └── your-notes.md
 ```
 
-When you run `/capture` or other commands, Claude Code:
+When you run `/capture`, `/youtube-note`, or other commands, Claude Code:
 1. Uses AI to understand the content
-2. Fetches data (transcripts, code, articles)
+2. Fetches data via MCP servers (transcripts, code, articles)
 3. Applies smart templates
 4. Tags automatically using predefined taxonomy
 5. Saves to your vault in markdown format
@@ -273,143 +312,59 @@ When you run `/capture` or other commands, Claude Code:
 
 ---
 
-## Detailed Requirements
-
-### Essential Software
-
-- **Claude Code** (version 2.0.36+)
-- **Obsidian** (any recent version)
-- **Docker Desktop** (for MCP Toolkit)
-
-### MCP Docker Servers (via Docker Desktop MCP Toolkit)
-
-Connect Claude Code to Docker Desktop's MCP Toolkit to get access to:
-
-- ✅ **GitHub Official** (10 tools) - Repository analysis, file reading, commits, PRs
-- ✅ **YouTube Transcripts** (3 tools) - Video info, transcripts with timestamps
-- ✅ **Firecrawl** (5 tools) - Web scraping, article fetching, crawling
-- ✅ **Obsidian** (12 tools) - Vault file operations, search, note management
-- ✅ **Context7** (2 tools) - Library documentation lookup
-- ✅ **Fetch (Reference)** (1 tool) - General web fetching
-- ✅ **Memory (Reference)** (9 tools) - Knowledge graph for note relationships
-- ✅ **Perplexity** (3 tools) - AI-powered web search
-
-**How to connect:** Docker Desktop → MCP Toolkit → Clients tab → Connect Claude Code
-
-### Required Obsidian Plugin
-
-**Obsidian MCP Tools** - For vault file operations
-
-Install via: Obsidian → Settings → Community Plugins → Search "MCP Tools" → Install → Enable → Click "Install Server"
-
-### Optional (For Advanced Features)
-
-**For Semantic Search:**
-- [Smart Connections](https://smartconnections.app/) - Install via Obsidian Community Plugins
-
-**For Publishing:**
-- GitHub account (free)
-- GitHub Pages repository configured
-
-### System Tools
-
-Required for the `/publish` command:
-```bash
-# macOS
-brew install git jq
-
-# Linux
-sudo apt install git jq
-```
-
-The `/setup` wizard will automatically check for these and guide you if missing.
-
----
-
-## Advanced Features (Optional)
-
-This plugin also serves as a **reference implementation** for Claude Code plugin development:
-
-- ✅ Automated releases via GitHub Actions
-- ✅ Configuration pattern for portability
-- ✅ Interactive setup wizards
-- ✅ Conversational development with Claude
-
-**For plugin developers:** See [DEVELOPER.md](DEVELOPER.md) for the full technical guide.
-
-## Installation & Usage
-
-### For End Users (Just Want to Use the Plugin)
-
-```bash
-# 1. Install
-claude plugin add obsidian-vault-manager
-
-# 2. Go to your vault
-cd /path/to/vault
-
-# 3. Start Claude and run setup
-claude
-/setup
-
-# 4. Start using commands!
-/capture https://youtube.com/watch?v=abc123
-```
-
-**[Full User Guide with Examples →](PLUGIN_FEATURES.md)**
-
-### For Developers (Want to Build Your Own Plugin)
-
-This repository is also a **template for building Claude Code plugins**. See [DEVELOPER.md](DEVELOPER.md) for:
-
-- How to use this as a template
-- Automated release workflow with GitHub Actions
-- Configuration patterns and best practices
-- Conversational development approach
-
----
-
-## Available Commands
-
-| Command | Description | Example |
-|---------|-------------|---------|
-| `/setup` | Interactive setup wizard | `/setup` |
-| `/capture` | Save content (YouTube, GitHub, articles, ideas) | `/capture https://youtube.com/watch?v=abc` |
-| `/publish` | Publish note to GitHub Pages | `/publish my-note.md` |
-| `/study-guide` | Generate study guide from content | `/study-guide my-note.md` |
-| `/semantic-search` | Find notes by meaning | `/semantic-search "productivity tips"` |
-| `/youtube-note` | Capture YouTube video with transcript | `/youtube-note https://youtube.com/watch?v=abc` |
-| `/idea` | Quick idea capture | `/idea Use AI to organize notes` |
-| `/gitingest` | Analyze GitHub repository | `/gitingest https://github.com/user/repo` |
-
-**[See detailed command documentation →](PLUGIN_FEATURES.md)**
-
----
-
 ## Troubleshooting
 
 ### Plugin not found
-```bash
-# Make sure you're using Claude Code 2.0+
-claude --version
 
-# Try reinstalling
-claude plugin remove obsidian-vault-manager
-claude plugin add obsidian-vault-manager
+```bash
+# Verify marketplace was added
+/plugin marketplace list
+
+# Should show: ZorroCheng-MC/obsidian-vault-manager-plugin
+
+# If not, add it again
+/plugin marketplace add ZorroCheng-MC/obsidian-vault-manager-plugin
 ```
 
 ### Commands not working
+
 ```bash
 # Run setup wizard again
 cd /path/to/vault
 claude
 /setup
+
+# Verify MCP servers are connected
+# Check Docker Desktop → MCP Toolkit → My servers (all should be green)
 ```
 
+### MCP Servers Not Connected
+
+1. Open **Docker Desktop → MCP Toolkit → Clients**
+2. Find **Claude Code** → Click **Disconnect** then **Connect**
+3. Go to **My servers** tab → verify all servers show green status
+4. Restart Claude Code
+
 ### Need help?
-- [Open an issue](https://github.com/ZorroCheng-MC/obsidian-vault-manager-plugin/issues)
-- [Check full documentation](PLUGIN_FEATURES.md)
-- [See developer guide](DEVELOPER.md)
+
+- **Complete Setup Guide**: [KnowledgeFactory Quick Setup Cheatsheet](https://zorrocheng-mc.github.io/sharehub/documents/KnowledgeFactory/KnowledgeFactory-Quick-Setup-Cheatsheet.html)
+- **Command Documentation**: [PLUGIN_FEATURES.html](https://zorrocheng-mc.github.io/sharehub/documents/obsidian-vault-manager-plugin/PLUGIN_FEATURES.html)
+- **Developer Guide**: [DEVELOPER.md](DEVELOPER.md)
+- **Open an Issue**: [github.com/ZorroCheng-MC/obsidian-vault-manager-plugin/issues](https://github.com/ZorroCheng-MC/obsidian-vault-manager-plugin/issues)
+
+---
+
+## For Plugin Developers
+
+This repository serves as a **reference implementation** for building Claude Code plugins. It demonstrates:
+
+- ✅ Automated releases with GitHub Actions (no manual publishing)
+- ✅ Configuration patterns for cross-platform compatibility
+- ✅ Interactive setup wizards for great UX
+- ✅ Conversational development approach
+- ✅ MCP server integration patterns
+
+**Want to build your own plugin?** See [DEVELOPER.md](DEVELOPER.md) for the complete technical guide.
 
 ---
 
@@ -419,20 +374,7 @@ claude
 
 **Want to contribute?** PRs welcome! See [CONTRIBUTING.md](CONTRIBUTING.md)
 
-**Need help?** Check [PLUGIN_FEATURES.md](PLUGIN_FEATURES.md) for detailed documentation
-
----
-
-## For Plugin Developers
-
-This repository is also a **reference implementation** for building Claude Code plugins. It demonstrates:
-
-- ✅ Automated releases with GitHub Actions (no manual publishing)
-- ✅ Configuration patterns for cross-platform compatibility
-- ✅ Interactive setup wizards for great UX
-- ✅ Conversational development approach
-
-**Want to build your own plugin?** See [DEVELOPER.md](DEVELOPER.md) for the complete technical guide.
+**Need help?** Check the [KnowledgeFactory Quick Setup Cheatsheet](https://zorrocheng-mc.github.io/sharehub/documents/KnowledgeFactory/KnowledgeFactory-Quick-Setup-Cheatsheet.html) for comprehensive documentation.
 
 ---
 
