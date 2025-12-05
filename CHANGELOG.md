@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.21] - 2025-12-05
+
+### Added
+- DoubleCopy v1.0.21 - Permission-free clipboard capture utility for macOS
+- Dynamic version reading from Info.plist (no more version mismatch)
+- Enhanced sharehub detection (checks ~/Dev/sharehub and ~/Documents/sharehub)
+- Workflow validation for sharehub (verifies .git and .github/workflows exist)
+
+### Fixed
+- Fixed note creation failing silently (added required tools to --allowed-tools)
+- Fixed statusItem crash on startup (proper optional handling)
+- Fixed Obsidian "Vault not found" error (corrected URL scheme)
+- Fixed template path to check marketplace plugin location first
+- Added Skill, Bash, SlashCommand to allowed-tools for capture.md compatibility
+
+### Changed
+- DoubleCopy now validates sharehub has .git directory AND workflow files
+- Capture script uses marketplace template path as first priority
+- Version now reads from Bundle.main.infoDictionary
+
 ## [1.0.0] - 2025-10-30
 
 ### Added
