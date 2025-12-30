@@ -2,163 +2,161 @@
 description: Smart capture with AI-powered auto-tagging for Bases filtering
 argument-hint: [content to capture]
 allowed-tools:
-  - Skill(obsidian-vault-manager)
-  - SlashCommand(/gitingest)
   - Bash(*)
-  - mcp__fetch__fetch
-  - mcp__MCP_DOCKER__get_file_contents
-  - mcp__MCP_DOCKER__list_commits
+  - Read(*)
+  - Write(*)
+  - WebFetch
+  - mcp__MCP_DOCKER__fetch
+  - mcp__MCP_DOCKER__firecrawl_scrape
+  - mcp__MCP_DOCKER__firecrawl_map
+  - mcp__MCP_DOCKER__firecrawl_search
   - mcp__MCP_DOCKER__get_video_info
   - mcp__MCP_DOCKER__get_transcript
-  - mcp__obsidian-mcp-tools__create_vault_file
+  - mcp__MCP_DOCKER__get_timed_transcript
+  - mcp__MCP_DOCKER__obsidian_append_content
+  - mcp__MCP_DOCKER__obsidian_get_file_contents
+  - mcp__MCP_DOCKER__obsidian_batch_get_file_contents
+  - mcp__MCP_DOCKER__obsidian_list_files_in_dir
+  - mcp__MCP_DOCKER__obsidian_list_files_in_vault
+  - mcp__MCP_DOCKER__obsidian_simple_search
+  - mcp__MCP_DOCKER__obsidian_complex_search
+  - mcp__MCP_DOCKER__obsidian_patch_content
+  - mcp__MCP_DOCKER__obsidian_delete_file
+  - mcp__MCP_DOCKER__obsidian_get_periodic_note
+  - mcp__MCP_DOCKER__obsidian_get_recent_changes
+  - mcp__MCP_DOCKER__obsidian_get_recent_periodic_notes
+  - mcp__MCP_DOCKER__get_file_contents
+  - mcp__MCP_DOCKER__search_repositories
+  - mcp__MCP_DOCKER__search_code
+  - mcp__MCP_DOCKER__list_commits
+  - mcp__MCP_DOCKER__list_branches
+  - mcp__MCP_DOCKER__get_commit
+  - mcp__MCP_DOCKER__resolve-library-id
+  - mcp__MCP_DOCKER__get-library-docs
+  - mcp__MCP_DOCKER__perplexity_ask
+  - mcp__MCP_DOCKER__perplexity_research
 ---
 
 ## Task
 
-Execute the `obsidian-vault-manager` skill for universal content capture.
+Capture content to Obsidian vault with AI-powered smart tagging.
 
-**Input**: `$ARGUMENTS` (YouTube URL, GitHub URL, web article, or plain text)
-**Operation**: Intelligent routing with AI-powered tagging
-
-## Process
-
-The skill will:
-1. **Analyze content type** from input
-   - YouTube URL → Video capture workflow
-   - **GitHub URL → Delegate to `/gitingest` command**
-   - HTTP/HTTPS URL → Article capture workflow
-   - Plain text → Idea capture workflow
-
-2. **Apply AI-powered tagging** from predefined taxonomy
-   - Content type tags (video, idea, article, repository)
-   - Topic tags (2-4 relevant topics: AI, productivity, development, etc.)
-   - Status tags (inbox for new captures)
-   - Metadata tags (actionable, technical, tutorial, etc.)
-
-3. **Create properly formatted note** using bundled templates
-   - Smart filename generation
-   - Comprehensive frontmatter
-   - Structured content sections
-   - Tag analysis and Bases filtering suggestions
-
-## GitHub Repository Handling (IMPORTANT)
-
-**When a GitHub URL is detected:**
-
-1. **Extract GitHub URL** from `$ARGUMENTS`
-2. **Call `/gitingest` command** using `SlashCommand` tool:
-   ```
-   SlashCommand("/gitingest https://github.com/owner/repo")
-   ```
-3. **The `/gitingest` command will:**
-   - Use MCP Docker GitHub tools (`get_file_contents`, `list_commits`)
-   - Analyze repository structure and contents
-   - Generate comprehensive markdown with proper tagging
-   - Auto-save to `/Users/zorro/Documents/Obsidian/Claudecode/`
-4. **Return success** - `/gitingest` handles the complete workflow
-
-**DO NOT:**
-- ❌ Manually call `mcp__gitingest__*` tools (deprecated)
-- ❌ Try to analyze GitHub repos yourself
-- ❌ Use the obsidian-vault-manager skill for GitHub URLs
-
-**Example Flow:**
-```
-User: /capture https://github.com/anthropics/claude-code
-
-→ Detect: GitHub URL
-→ Execute: SlashCommand("/gitingest https://github.com/anthropics/claude-code")
-→ Result: Complete repository analysis saved to Obsidian
-```
+**Input**: `$ARGUMENTS`
+**Today's Date**: Run `date "+%Y-%m-%d"` to get current date
 
 ## Content Routing
 
-The skill automatically routes based on input:
+Analyze the input and process according to content type. **Check patterns in this exact order**:
 
-**YouTube Videos:**
-- Pattern: `youtube.com/watch?v=` or `youtu.be/`
-- Fetches transcript and metadata
-- Template: `templates/youtube-note-template.md`
-- Tags: `[video, {topics}, inbox, {metadata}]`
+| Priority | Content Type | Pattern | Processing |
+|----------|--------------|---------|------------|
+| 1 | **YouTube** | Domain is `youtube.com` or `youtu.be` | YouTube video note |
+| 2 | **GitHub** | Domain is `github.com` | Repository analysis note |
+| 3 | **Web Article + Video** | HTTP/HTTPS URL with `?y=` param (non-YouTube domain) | Study guide WITH video transcript |
+| 4 | **Web Article** | Other `http://` or `https://` URL | Study guide note |
+| 5 | **Plain Text** | No URL pattern | Idea note |
 
-**GitHub Repositories:**
-- Pattern: `github.com/owner/repo`
-- Uses `/gitingest` command (MCP Docker GitHub tools)
-- Creates comprehensive repository analysis
-- Tags: `[repository, {language}, {topics}, inbox, technical]`
+**IMPORTANT**: A URL like `https://example.com/page?y=VIDEO_ID` is a **Web Article + Video** (Priority 3), NOT a YouTube video. The `?y=` param indicates an embedded video to include in the study guide.
 
-**Web Articles:**
-- Pattern: HTTP/HTTPS URLs (not YouTube/GitHub)
-- Fetches and summarizes content
-- Extracts key takeaways
-- Tags: `[article, {topics}, inbox, quick-read]`
+---
 
-**Ideas & Thoughts:**
-- Pattern: Plain text without URL
-- Template: `templates/idea-template.md`
-- Smart filename from content
-- Tags: `[idea, {topics}, inbox, {metadata}]`
+## YouTube Video Processing
+
+**ONLY for URLs where domain is `youtube.com` or `youtu.be`**:
+
+1. Extract video ID from URL
+2. Use `mcp__MCP_DOCKER__get_video_info` for metadata (title, channel, duration)
+3. Use `mcp__MCP_DOCKER__get_transcript` for transcript
+4. Read template: `cat ~/.claude/skills/obsidian-vault-manager/templates/youtube-note-template.md`
+5. Create note with `mcp__MCP_DOCKER__obsidian_append_content` (creates new file)
+
+**Note**: URLs like `https://othersite.com/page?y=VIDEO_ID` are NOT YouTube - use "Web Article + Video" processing instead.
+
+**Filename**: `{date}-{channel-name}-{descriptive-title}-{video_id}.md`
+**CRITICAL**: Include video ID in filename to ensure each video gets a separate note file.
+
+**Required sections**:
+- Frontmatter with cover, url, channel, video_date, duration
+- Clickable YouTube thumbnail
+- Description and learning objectives
+- Structured curriculum with timestamps
+- Key takeaways
+- Rating section
+
+---
+
+## Web Article + Video Processing (Priority 3)
+
+**For URLs with `?y=VIDEO_ID` param on NON-YouTube domains** (e.g., `https://agenticengineer.com/page?y=abc123`):
+
+This is a web article with an embedded video. Create a **study guide** that includes BOTH:
+
+1. Fetch article content using `mcp__MCP_DOCKER__firecrawl_scrape` or `WebFetch`
+2. Extract video ID from `?y=` parameter
+3. Use `mcp__MCP_DOCKER__get_video_info` for video metadata
+4. Use `mcp__MCP_DOCKER__get_transcript` for video transcript
+5. Create comprehensive study guide combining article + video content:
+   - Learning objectives (checkboxed)
+   - Key concepts from article AND video
+   - Course structure (if applicable)
+   - Study strategies
+   - Self-assessment questions
+   - Progress tracking
+6. Create note with `mcp__MCP_DOCKER__obsidian_append_content` (creates new file)
+
+**Filename**: `{date}-{source-name}-{topic}-study-guide.md`
+**Type**: `study-guide`
+**Status**: `processing`
+
+---
+
+## Web Article / Study Guide Processing (Priority 4)
+
+For other non-YouTube, non-GitHub URLs (no `?y=` param):
+
+1. Fetch content using `WebFetch` or `mcp__MCP_DOCKER__fetch` or `mcp__MCP_DOCKER__firecrawl_scrape`
+2. Analyze content and create comprehensive study guide with:
+   - Learning objectives (checkboxed)
+   - Key concepts breakdown
+   - Study strategies
+   - Self-assessment questions
+   - Progress tracking
+3. Create note with `mcp__MCP_DOCKER__obsidian_append_content` (creates new file)
+
+**Filename**: `{date}-{source-name}-{topic}-study-guide.md`
+**Status**: `processing` (active study material)
+
+---
+
+## Idea Processing
+
+For plain text (no URL):
+
+1. Analyze the text for main concepts
+2. Generate smart tags from taxonomy
+3. Create note with sections:
+   - Core idea explanation
+   - Why it matters
+   - Related concepts
+   - Next steps (if actionable)
+4. Create note with `mcp__MCP_DOCKER__obsidian_append_content` (creates new file)
+
+**Filename**: `{date}-{3-5-word-idea-name}.md`
+**Status**: `inbox`
+
+---
 
 ## Tag Taxonomy
 
-All tags come from the predefined taxonomy in the skill:
+**Content Types**: video, article, study-guide, idea, repository
+**Topics**: AI, Claude, productivity, knowledge-management, development, learning, research, writing, tools, business, design, automation, data-science, web-development, personal-growth, finance, coding, architecture
+**Status**: inbox (default), processing (for study guides)
+**Metadata**: tutorial, deep-dive, quick-read, technical, conceptual, actionable, inspiration
 
-### Content Type (1 tag)
-video, idea, article, study-guide, repository, reference, project
+## Critical Requirements
 
-### Topics (2-4 tags)
-AI, Claude, Gemini, product, marketing, projects, workflow, architecture,
-design, UI-UX, coding, productivity, knowledge-management, development,
-learning, research, writing, tools, business, automation, data-science,
-web-development, personal-growth, finance
-
-### Status (1 tag)
-inbox, processing, evergreen, published, archived, needs-review
-
-### Metadata (0-2 tags)
-high-priority, quick-read, deep-dive, technical, conceptual,
-actionable, tutorial, inspiration
-
-## Expected Output
-
-After successful capture:
-- ✅ Content analyzed and type detected
-- ✅ Smart tags applied (6-8 total)
-- ✅ Note created with proper filename
-- ✅ Template populated with content
-- ✅ Tag analysis section added
-- ✅ Bases filtering suggestions included
-
-## Examples
-
-**YouTube video:**
-```
-/capture https://youtube.com/watch?v=abc123
-```
-→ Creates video note with transcript, learning objectives, curriculum
-
-**GitHub repo:**
-```
-/capture https://github.com/anthropics/claude-code
-```
-→ Creates repository analysis with architecture overview
-
-**Article:**
-```
-/capture https://medium.com/article-about-ai
-```
-→ Creates article summary with key takeaways
-
-**Quick idea:**
-```
-/capture Use AI to automatically categorize notes
-```
-→ Creates idea note with smart filename and tags
-
-## Integration with Bases
-
-Tags enable powerful Bases filtering:
-- `type = video AND tags contains "AI"`
-- `tags contains "inbox" AND tags contains "high-priority"`
-- `tags contains "actionable" AND status = "processing"`
-- `type = repository AND tags contains "development"`
+1. **MUST call `mcp__MCP_DOCKER__obsidian_append_content`** to save the file (creates new file if doesn't exist)
+2. Use 6-8 tags total from the taxonomy
+3. Include proper frontmatter with all required fields
+4. For YouTube: include clickable thumbnail and structured curriculum
+5. For articles with embedded videos: capture BOTH article content AND video transcript

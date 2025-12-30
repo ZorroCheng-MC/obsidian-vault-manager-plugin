@@ -2,6 +2,7 @@
 name: obsidian-vault-manager
 description: Manage Obsidian knowledge base - capture ideas, YouTube videos, articles, repositories, create study guides, and publish to GitHub Pages. Use smart AI tagging for automatic organization.
 allowed-tools:
+  - SlashCommand(*)
   - mcp__obsidian-mcp-tools__*
   - mcp__MCP_DOCKER__create_or_update_file
   - mcp__MCP_DOCKER__push_files
@@ -67,6 +68,32 @@ Manage an AI-powered Obsidian knowledge base with automatic organization and Git
 - `tutorial` - Step-by-step guide
 - `inspiration` - Creative, motivational
 
+## Content Routing (Dispatcher)
+
+When invoked from `/capture`, analyze the input and dispatch to the appropriate slash command:
+
+| Content Type | Pattern | Dispatch Command |
+|--------------|---------|------------------|
+| **YouTube** | `youtube.com`, `youtu.be` | `SlashCommand("/youtube-note $INPUT")` |
+| **GitHub** | `github.com` | `SlashCommand("/gitingest $INPUT")` |
+| **Web Article** | Other HTTP/HTTPS URL | `SlashCommand("/study-guide $INPUT")` |
+| **Plain Text** | No URL pattern | `SlashCommand("/idea $INPUT")` |
+
+**Example dispatches:**
+```
+Input: https://youtube.com/watch?v=abc123
+→ SlashCommand("/youtube-note https://youtube.com/watch?v=abc123")
+
+Input: https://github.com/anthropics/claude-code
+→ SlashCommand("/gitingest https://github.com/anthropics/claude-code")
+
+Input: https://medium.com/some-article
+→ SlashCommand("/study-guide https://medium.com/some-article")
+
+Input: My new idea about AI agents
+→ SlashCommand("/idea My new idea about AI agents")
+```
+
 ## Core Operations
 
 ### 1. Capture Content (Universal Inbox)
@@ -111,33 +138,57 @@ Example: `2025-10-24-ai-labs-context-engineering-claude-code.md`
 
 **Step 4: Load Template and Substitute Variables**
 
-1. Load bundled template:
+⚠️ **CRITICAL: You MUST literally read and substitute the template file. DO NOT generate your own structure.**
+
+1. **Read the actual template file** - Execute this command FIRST:
    ```bash
-   TEMPLATE=$(cat "$SKILL_DIR/templates/youtube-note-template.md")
+   cat ~/.claude/skills/obsidian-vault-manager/templates/youtube-note-template.md
    ```
 
-2. Substitute placeholders with analyzed data:
-   - `{{TITLE}}` - Video title from metadata
-   - `{{VIDEO_ID}}` - Extracted video ID
-   - `{{CHANNEL}}` - Channel name
-   - `{{DATE}}` - Current date (YYYY-MM-DD)
-   - `{{TOPIC_TAGS}}` - 2-4 topic tags from taxonomy
-   - `{{METADATA_TAGS}}` - 1-2 metadata tags (tutorial, actionable, etc.)
-   - `{{PRIORITY}}` - high/medium/low
-   - `{{DURATION}}` - Estimated duration (~X minutes)
-   - `{{DESCRIPTION}}` - 2-3 sentence summary from transcript analysis
-   - `{{LEARNING_OBJECTIVES}}` - Bullet list of learning outcomes
-   - `{{CURRICULUM}}` - Structured outline with checkboxes
-   - `{{MAIN_INSIGHTS}}` - 3-5 key insights from transcript
-   - `{{ACTIONABLE_POINTS}}` - Practical takeaways
-   - `{{TARGET_AUDIENCE}}` - Who should watch this
-   - `{{TOPIC_ANALYSIS}}` - Explanation of chosen topics
-   - `{{COMPLEXITY_LEVEL}}` - quick-read/tutorial/deep-dive
-   - `{{PRIORITY_REASONING}}` - Why this priority
-   - `{{TAG_REASONING}}` - Tag selection explanation
-   - `{{PRIMARY_TOPIC}}` - Main topic for filtering
-   - `{{RELATED_SEARCHES}}` - Suggested semantic searches
-   - `{{CONNECTIONS}}` - Links to related notes
+2. **Take the raw template content** and perform literal `{{PLACEHOLDER}}` text substitution:
+   - DO NOT paraphrase or summarize the template structure
+   - DO NOT reorganize or reorder sections
+   - DO NOT omit any fields, sections, or elements
+   - DO NOT change field names (use `channel:` not `creator:`, use `url:` not `source:`)
+   - PRESERVE all emojis in section headers (📖 🎯 📋 📝 ⭐ 🏷️ 🔗)
+   - PRESERVE the clickable thumbnail image markdown after the H1 title
+
+3. **Required placeholder substitutions** (ALL must be present in final output):
+
+   | Placeholder | Required | Description |
+   |-------------|----------|-------------|
+   | `{{VIDEO_ID}}` | **YES** | Must appear in `url:`, `cover:`, AND thumbnail image link |
+   | `{{TITLE}}` | **YES** | Video title |
+   | `{{CHANNEL}}` | **YES** | Channel name (field must be named `channel:`) |
+   | `{{DATE}}` | **YES** | Today's capture date (YYYY-MM-DD) |
+   | `{{VIDEO_DATE}}` | **YES** | Video publish date from metadata |
+   | `{{TOPIC_TAGS}}` | **YES** | 2-4 topic tags, comma-separated |
+   | `{{METADATA_TAGS}}` | **YES** | 1-2 metadata tags |
+   | `{{PRIORITY}}` | **YES** | high/medium/low |
+   | `{{DURATION}}` | **YES** | Estimated duration (~X minutes) |
+   | `{{DESCRIPTION}}` | **YES** | 2-3 sentence summary |
+   | `{{LEARNING_OBJECTIVES}}` | **YES** | Bullet list of outcomes |
+   | `{{CURRICULUM}}` | **YES** | Structured outline with timestamps |
+   | `{{MAIN_INSIGHTS}}` | **YES** | 3-5 key insights |
+   | `{{ACTIONABLE_POINTS}}` | **YES** | Practical takeaways |
+   | `{{TARGET_AUDIENCE}}` | **YES** | Who should watch |
+   | `{{TOPIC_ANALYSIS}}` | **YES** | Explanation of topics |
+   | `{{COMPLEXITY_LEVEL}}` | **YES** | quick-read/tutorial/deep-dive |
+   | `{{PRIORITY_REASONING}}` | **YES** | Why this priority |
+   | `{{TAG_REASONING}}` | **YES** | Tag selection explanation |
+   | `{{PRIMARY_TOPIC}}` | **YES** | Main topic for filtering |
+   | `{{RELATED_SEARCHES}}` | **YES** | Suggested searches |
+   | `{{CONNECTIONS}}` | **YES** | Links to related notes |
+
+4. **Verification checklist** - Before creating file, confirm:
+   - [ ] Frontmatter has `cover:` with `https://i.ytimg.com/vi/{{VIDEO_ID}}/maxresdefault.jpg`
+   - [ ] Frontmatter has `url:` (not `source:`)
+   - [ ] Frontmatter has `channel:` (not `creator:`)
+   - [ ] Frontmatter has `video_date:` field
+   - [ ] Clickable thumbnail image `[![Watch on YouTube](...)]` appears after H1 title
+   - [ ] All section headers have emojis: 📖 🎯 📋 📝 ⭐ 🏷️ 🔗
+   - [ ] Rating section with Quality/Relevance/Recommend fields is present
+   - [ ] Footer has "Captured:", "Source:", "Channel:" lines
 
 **Step 5: Create Enhanced Video Entry**
 
@@ -173,13 +224,19 @@ Examples:
 
 **Step 3: Load Template and Substitute Variables**
 
-1. Load bundled template:
+⚠️ **CRITICAL: You MUST literally read and substitute the template file. DO NOT generate your own structure.**
+
+1. **Read the actual template file** - Execute this command FIRST:
    ```bash
-   SKILL_DIR="$HOME/.claude/skills/obsidian-vault-manager"
-   TEMPLATE=$(cat "$SKILL_DIR/templates/idea-template.md")
+   cat ~/.claude/skills/obsidian-vault-manager/templates/idea-template.md
    ```
 
-2. Substitute placeholders with analyzed data:
+2. **Take the raw template content** and perform literal `{{PLACEHOLDER}}` text substitution:
+   - DO NOT paraphrase or summarize the template structure
+   - DO NOT reorganize or reorder sections
+   - PRESERVE all emojis in section headers (💡 🎯 🔗 📝 🏷️ 🔍)
+
+3. **Required placeholder substitutions:**
    - `{{TITLE}}` - Concise idea title
    - `{{TOPIC_TAGS}}` - 2-4 topic tags from taxonomy (comma-separated)
    - `{{METADATA_TAGS}}` - 1-2 metadata tags (actionable, conceptual, inspiration, etc.)
@@ -196,6 +253,12 @@ Examples:
    - `{{PRIMARY_TOPIC}}` - Main topic for filtering
    - `{{SECONDARY_TOPIC}}` - Secondary topic for filtering
    - `{{RELATED_CONCEPT}}` - For semantic search suggestions
+
+4. **Verification checklist** - Before creating file, confirm:
+   - [ ] All section headers have emojis
+   - [ ] Tags Analysis section is present
+   - [ ] Suggested Bases Filters section is present
+   - [ ] Footer has "Captured:", "Status:", "Next Action:" lines
 
 **Step 4: Create Enhanced Idea File**
 
@@ -332,13 +395,19 @@ Examples:
 
 **Step 4: Load Template and Substitute Variables**
 
-1. Load bundled template:
+⚠️ **CRITICAL: You MUST literally read and substitute the template file. DO NOT generate your own structure.**
+
+1. **Read the actual template file** - Execute this command FIRST:
    ```bash
-   SKILL_DIR="$HOME/.claude/skills/obsidian-vault-manager"
-   TEMPLATE=$(cat "$SKILL_DIR/templates/study-guide-template.md")
+   cat ~/.claude/skills/obsidian-vault-manager/templates/study-guide-template.md
    ```
 
-2. Substitute placeholders with analyzed data:
+2. **Take the raw template content** and perform literal `{{PLACEHOLDER}}` text substitution:
+   - DO NOT paraphrase or summarize the template structure
+   - DO NOT reorganize or reorder sections
+   - PRESERVE all emojis in section headers (📚 🎯 ⏱️ 📋 💡 🧠 📊 🔗 🏷️ 🔍)
+
+3. **Required placeholder substitutions:**
    - `{{TITLE}}` - Study subject/topic name
    - `{{TOPIC_TAGS}}` - 2-4 topic tags from taxonomy (comma-separated)
    - `{{METADATA_TAGS}}` - 1-2 metadata tags (deep-dive, technical, tutorial, etc.)
@@ -369,6 +438,13 @@ Examples:
    - `{{RELATED_CONCEPT}}` - For semantic searches
    - `{{FOUNDATIONAL_TOPIC}}` - Base knowledge topic
    - `{{NEXT_ACTION}}` - Specific next step in study plan
+
+4. **Verification checklist** - Before creating file, confirm:
+   - [ ] Frontmatter has `difficulty:` and `estimated-time:` fields
+   - [ ] All section headers have emojis
+   - [ ] Self-Assessment section with Knowledge Checks is present
+   - [ ] Progress Tracking section is present
+   - [ ] Footer has "Created:", "Status:", "Next Action:" lines
 
 **Step 5: Create Enhanced Study Guide**
 

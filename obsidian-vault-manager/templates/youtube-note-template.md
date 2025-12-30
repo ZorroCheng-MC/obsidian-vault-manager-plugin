@@ -4,6 +4,7 @@ tags: [video, {{TOPIC_TAGS}}, inbox, {{METADATA_TAGS}}]
 url: https://www.youtube.com/watch?v={{VIDEO_ID}}
 cover: https://i.ytimg.com/vi/{{VIDEO_ID}}/maxresdefault.jpg
 date: {{DATE}}
+video_date: {{VIDEO_DATE}}
 type: video
 status: inbox
 priority: {{PRIORITY}}
