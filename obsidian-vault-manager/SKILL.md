@@ -1,6 +1,6 @@
 ---
 name: obsidian-vault-manager
-description: Manage Obsidian knowledge base - capture ideas, YouTube videos, articles, repositories, create study guides, and publish to GitHub Pages. Use smart AI tagging for automatic organization.
+description: Manage Obsidian knowledge base - capture ideas, YouTube videos, articles, repositories, create study guides, publish to GitHub Pages, and share notes via URL (no server storage). Use smart AI tagging for automatic organization.
 allowed-tools:
   - SlashCommand(*)
   - mcp__obsidian-mcp-tools__*
@@ -638,6 +638,84 @@ Check the fetched content for:
 - For Claude Desktop: Consider using MCP GitHub tools as alternative
 - Script handles all image copying and path conversion automatically
 - Git commit includes Claude Code attribution
+
+### 6. Share via URL (No Server Storage)
+
+**Bundled Resources:**
+- **Decoder Page**: `sharehub/share.html` - Renders shared content with annotation support
+
+When user asks to share a note:
+
+**Step 1: Read Note Content**
+
+```bash
+VAULT_PATH="/Users/zorro/Documents/Obsidian/Claudecode"
+NOTE_PATH="$VAULT_PATH/$NOTE_FILE"
+```
+
+Use the Read tool to get note content.
+
+**Step 2: Generate Shareable URL**
+
+Use Python to compress and encode (Plannotator-compatible format):
+
+```python
+import json
+import zlib
+import base64
+
+# Create data structure
+data = {
+    "p": note_content,  # Plan/content
+    "a": []             # Annotations (empty initially)
+}
+
+# Compress with zlib
+json_str = json.dumps(data, ensure_ascii=False)
+compressed = zlib.compress(json_str.encode('utf-8'))
+
+# Base64 URL-safe encode
+encoded = base64.urlsafe_b64encode(compressed).decode('utf-8').rstrip('=')
+
+# Generate URL
+url = f"https://zorrocheng-mc.github.io/sharehub/share.html#{encoded}"
+```
+
+**Step 3: Output and Copy to Clipboard**
+
+```bash
+# Copy to clipboard (macOS)
+echo "$URL" | pbcopy
+```
+
+**Features:**
+- **No server storage**: Content is encoded entirely in the URL
+- **Annotations**: Recipients can add comments and generate new URLs
+- **Compression**: zlib reduces URL length significantly
+- **Plannotator-compatible**: Same format as Plannotator for interoperability
+
+**Data Structure:**
+```json
+{
+  "p": "# Markdown content...",
+  "a": [
+    ["C", "section", "comment text", "session-id", null]
+  ]
+}
+```
+
+**Encoding Pipeline:**
+```
+JSON → zlib compress → Base64 URL-safe encode (- and _ instead of + and /)
+```
+
+**Limitations:**
+- Very large notes (>10KB) may create long URLs
+- Some platforms truncate long URLs
+- For large content, use `/publish` instead
+
+**Share Page URL:**
+`https://zorrocheng-mc.github.io/sharehub/share.html#<encoded-data>`
 
 ## MCP Tools Reference
 

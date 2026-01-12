@@ -9,6 +9,7 @@ Manage an AI-powered Obsidian knowledge base with automatic organization and Git
 - **Bundled Scripts**: Executable scripts for transcript fetching and publishing
 - **Template System**: Consistent note structure across all content types
 - **GitHub Pages Publishing**: Publish notes to your public sharehub (`/publish`)
+- **URL-Based Sharing**: Share notes via URL with no server storage (`/share`) - Plannotator-compatible
 
 ## Installation
 
@@ -72,8 +73,36 @@ chmod +x ~/.claude/plugins/obsidian-vault-manager/scripts/core/*.sh
 ### In Claude Code CLI
 
 ```bash
+# Capture YouTube video
 /youtube-note https://youtu.be/VIDEO_ID
+
+# Capture quick idea
+/idea My brilliant idea about AI agents
+
+# Publish to GitHub Pages
+/publish my-note.md
+
+# Share via URL (no server storage)
+/share my-note.md
 ```
+
+### Share Command Details
+
+The `/share` command creates a shareable URL with the note content encoded directly in the URL (Plannotator-style):
+
+```
+https://zorrocheng-mc.github.io/sharehub/share.html#<compressed-base64>
+```
+
+**Features:**
+- No server storage - content lives in the URL
+- Recipients can add comments/annotations
+- Comments generate new URLs for sharing back
+- Compatible with Plannotator format
+
+**Limitations:**
+- Large notes (>10KB) create very long URLs
+- For large content, use `/publish` instead
 
 ### In Claude Desktop
 
@@ -210,11 +239,25 @@ pip3 install pyyaml
 ├── README.md                   # This file
 ├── scripts/
 │   ├── core/
-│   │   └── fetch-youtube-transcript.sh
+│   │   ├── fetch-youtube-transcript.sh
+│   │   └── publish.sh
 │   └── validation/
 │       └── validate-frontmatter.py
 └── templates/
-    └── youtube-note-template.md
+    ├── youtube-note-template.md
+    ├── idea-template.md
+    └── study-guide-template.md
+
+# Commands (in plugin root)
+commands/
+├── share.md                    # URL-based sharing (Plannotator-compatible)
+├── publish.md                  # GitHub Pages publishing
+├── youtube-note.md             # YouTube video capture
+├── idea.md                     # Quick idea capture
+└── ...
+
+# Related: ShareHub decoder page
+~/Dev/sharehub/share.html       # URL decoder for /share command
 ```
 
 ## Version
