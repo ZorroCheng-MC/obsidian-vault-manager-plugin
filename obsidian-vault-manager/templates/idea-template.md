@@ -5,6 +5,7 @@ date: {{DATE}}
 type: idea
 status: inbox
 priority: {{PRIORITY}}
+read: false
 ---
 
 # {{TITLE}}

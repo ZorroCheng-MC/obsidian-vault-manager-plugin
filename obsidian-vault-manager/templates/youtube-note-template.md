@@ -10,6 +10,7 @@ status: inbox
 priority: {{PRIORITY}}
 duration: {{DURATION}}
 channel: {{CHANNEL}}
+read: false
 ---
 
 # {{TITLE}}

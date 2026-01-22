@@ -8,6 +8,7 @@ status: processing
 difficulty: {{DIFFICULTY}}
 estimated-time: {{ESTIMATED_TIME}}
 priority: {{PRIORITY}}
+read: false
 ---
 
 # Study Guide: {{TITLE}}
